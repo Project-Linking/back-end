@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import tukorea.projectlink.board.Board;
+import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.user.User;
 
 import java.util.ArrayList;
@@ -39,9 +39,4 @@ public class Comment {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> replies = new ArrayList<>();
-
-    public void setBoard(Board board){
-        this.board=board;
-        board.getComments().add(this);
-    }
 }
