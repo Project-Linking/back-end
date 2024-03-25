@@ -7,8 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Entity
 @Getter
 @Table(name="USERS")
-@AllArgsConstructor
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
@@ -36,12 +34,20 @@ public class User {
         this.role = Role.USER;
     }
 
-    @Builder
+    @Builder(builderMethodName = "signupBuilder")
     public User(String loginId, String password, String nickname, Role role, PasswordEncoder passwordEncoder) {
         this.loginId = loginId;
         this.password = passwordEncode(password,passwordEncoder);
         this.nickname = nickname;
         this.role = role;
+    }
+
+    @Builder
+    public User(String nickname, Role role, SocialType socialType, String socialId) {
+        this.nickname = nickname;
+        this.role = role;
+        this.socialType = socialType;
+        this.socialId = socialId;
     }
 
     // 비밀번호 암호화 메소드

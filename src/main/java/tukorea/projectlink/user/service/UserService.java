@@ -18,7 +18,7 @@ public class UserService {
 
     public void signUp(UserSignUpDto userSignUpDto) throws Exception {
         validateInputField(userSignUpDto);
-        User user = User.builder()
+        User user = User.signupBuilder()
                 .loginId(userSignUpDto.getLoginId())
                 .password(userSignUpDto.getPassword())
                 .passwordEncoder(passwordEncoder)
