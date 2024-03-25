@@ -50,6 +50,7 @@ public class CommentService {
         List<Comment> comments = commentRepository.findAllByBoard(board);
 
         return comments.stream()
+                .filter(comment -> comment.getParent() == null)
                 .map(ResponseComment::new)
                 .collect(Collectors.toList());
     }
