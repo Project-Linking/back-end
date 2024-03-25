@@ -10,7 +10,7 @@ import tukorea.projectlink.comment.service.CommentService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/api/comment")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
