@@ -47,13 +47,28 @@ public class CommentService {
     public List<ResponseComment> getAllCommentByPost(Long postId) {
         Board board = boardRepository.findById(postId).orElseThrow(() -> new RuntimeException("Board not found"));
 
-        List<Comment> comment = commentRepository.findAllByBoard(board);
+        List<Comment> comments = commentRepository.findAllByBoard(board);
 
-        return comment.stream()
+        return comments.stream()
                 .map(ResponseComment::new)
                 .collect(Collectors.toList());
+    }
+
+    public ResponseComment updateComment(Long commentId,RequestComment requestComment) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not Found"));
 
 
+        comment.updateComment(requestComment.getContent());
+
+        return new ResponseComment(comment);
+    }
+
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not Found"));
+
+        commentRepository.delete(comment);
     }
 
 }

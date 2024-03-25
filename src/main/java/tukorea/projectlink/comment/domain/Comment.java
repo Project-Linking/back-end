@@ -10,6 +10,7 @@ import tukorea.projectlink.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -39,4 +40,9 @@ public class Comment {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> replies = new ArrayList<>();
+
+    public void updateComment(String content){
+        Optional.ofNullable(content).ifPresent(value -> this.content = value);
+    }
+
 }
