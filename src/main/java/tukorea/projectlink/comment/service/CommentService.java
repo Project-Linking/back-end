@@ -64,7 +64,7 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if(!comment.getUser().equals(user)){
-            throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
+            throw new IllegalStateException("댓글을 수정할 권한이 없습니다.");
         }
         comment.updateComment(requestComment.getContent());
 
@@ -78,7 +78,7 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if(!comment.getUser().equals(user)){
-            throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
+            throw new IllegalStateException("댓글을 수정할 권한이 없습니다.");
         }
 
         commentRepository.delete(comment);
