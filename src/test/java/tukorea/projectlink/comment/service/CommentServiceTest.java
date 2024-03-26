@@ -25,7 +25,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
@@ -91,96 +91,87 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("성공: 댓글작성")
     void createComment() {
         //given
         when(userA.getUsername()).thenReturn("loginId");
-
-
         RequestComment requestComment = RequestComment.builder()
                 .boardId(1L)
                 .content("test_content")
                 .build();
 
+        //when
         when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(this.user1));
         when(boardRepository.findById(any())).thenReturn(Optional.ofNullable(Board.builder().build()));
         when(commentRepository.save(any())).thenReturn(comment);
 
         ResponseComment result = commentService.createComment(userA, requestComment);
 
+        //then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEqualTo(comment.getContent());
         assertThat(result.getContent()).isEqualTo(comment.getContent());
     }
 
     @Test
-    @DisplayName("댓글 불러오기")
+    @DisplayName("성공: 댓글 불러오기")
     void getCommentByBoard() {
         //given
-        comment.setBoard(board);
-
         List<Comment> comments = new ArrayList<>();
         comments.add(comment);
 
-
+        //when
         when(boardRepository.findById(any())).thenReturn(Optional.ofNullable(board));
         when(commentRepository.findAllByBoard(any())).thenReturn(comments);
 
         List<ResponseComment> results = commentService.getAllCommentByPost(1L);
 
+        //then
         assertThat(results.size()).isEqualTo(1);
     }
 
     @Test
-    @DisplayName("댓글 수정하기")
+    @DisplayName("성공: 댓글 수정하기")
     void updateComment() {
         //given
         when(userA.getUsername()).thenReturn("loginId");
-
-        comment.setBoard(board);
 
         RequestComment requestComment = RequestComment.builder()
                 .content("test_content")
                 .build();
 
+        //when
         when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(this.user1));
         when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
 
         ResponseComment result = commentService.updateComment(userA, 1L, requestComment);
 
+        //then
         assertThat(result.getContent()).isEqualTo("test_content");
     }
 
     @Test
-    @DisplayName("유저A가 작성한댓글을 유저B가 수정할경우")
+    @DisplayName("실패: 유저A가 작성한댓글을 유저B가 수정할경우")
     void updateCommentThrowError() {
-        when(userA.getUsername()).thenReturn("userA");
-        when(userB.getUsername()).thenReturn("userB");
-
-        User user1 = User.signupBuilder()
-                .loginId(userA.getUsername())
-                .password("password")
-                .passwordEncoder(passwordEncoder)
-                .nickname("nickname1")
-                .build();
-
-        User user2 = User.signupBuilder()
-                .loginId(userB.getUsername())
-                .password("password")
-                .passwordEncoder(passwordEncoder)
-                .nickname("nickname2")
-                .build();
-
-        comment.setBoard(board);
-
+        //given
         RequestComment requestComment = RequestComment.builder()
                 .content("write_user1")
                 .build();
-
+        //when
         when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(user2));
         when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
-
+        //then
         assertThrows(IllegalStateException.class, () -> commentService.updateComment(userB, 1L, requestComment));
     }
-    
+
+    @Test
+    @DisplayName("실패: 유저B가 유저A가 작성한 댓글삭제")
+    void deleteComment() {
+        //when
+        when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(user2));
+        when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
+        //then
+        assertThrows(IllegalStateException.class, () -> commentService.deleteComment(userB, 1L));
+    }
 
 }
