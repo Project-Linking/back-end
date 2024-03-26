@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.respository.BoardRepository;
@@ -41,20 +43,26 @@ class CommentServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UserDetails userDetails;
+
     @InjectMocks
     private CommentService commentService;
 
     @Test
     void createComment() {
         //given
-        User user=User.signupBuilder()
-                .loginId("loginId")
+        when(userDetails.getUsername()).thenReturn("loginId");
+
+        User user = User.signupBuilder()
+                .loginId(userDetails.getUsername())
                 .password("password")
                 .passwordEncoder(passwordEncoder)
                 .nickname("nickname")
                 .build();
 
-        Board board= Board.builder()
+
+        Board board = Board.builder()
                 .title("test")
                 .content("content")
                 .build();
@@ -67,33 +75,32 @@ class CommentServiceTest {
 
         RequestComment requestComment = RequestComment.builder()
                 .boardId(1L)
-                .userId(1L)
                 .content("test_content")
                 .build();
 
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
+        when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(user));
         when(boardRepository.findById(any())).thenReturn(Optional.ofNullable(Board.builder().build()));
         when(commentRepository.save(any())).thenReturn(comment);
 
-        ResponseComment result = commentService.createComment(requestComment);
+        ResponseComment result = commentService.createComment(userDetails, requestComment);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEqualTo(comment.getContent());
-        assertThat(result).isEqualTo(comment.getContent());
+        assertThat(result.getContent()).isEqualTo(comment.getContent());
     }
 
     @Test
     @DisplayName("댓글 불러오기")
-    void getCommentByBoard(){
+    void getCommentByBoard() {
         //given
-        User user=User.signupBuilder()
+        User user = User.signupBuilder()
                 .loginId("loginId")
                 .password("password")
                 .passwordEncoder(passwordEncoder)
                 .nickname("nickname")
                 .build();
 
-        Board board= Board.builder()
+        Board board = Board.builder()
                 .title("test")
                 .content("content")
                 .comments(new ArrayList<>())
@@ -107,7 +114,7 @@ class CommentServiceTest {
 
         comment.setBoard(board);
 
-        List<Comment> comments=new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
         comments.add(comment);
 
 
