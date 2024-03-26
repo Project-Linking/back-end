@@ -17,6 +17,8 @@ import tukorea.projectlink.comment.repository.CommentRepository;
 import tukorea.projectlink.user.User;
 import tukorea.projectlink.user.repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,4 +81,42 @@ class CommentServiceTest {
         assertThat(result.getContent()).isEqualTo(comment.getContent());
         assertThat(result).isEqualTo(comment.getContent());
     }
+
+    @Test
+    @DisplayName("댓글 불러오기")
+    void getCommentByBoard(){
+        //given
+        User user=User.signupBuilder()
+                .loginId("loginId")
+                .password("password")
+                .passwordEncoder(passwordEncoder)
+                .nickname("nickname")
+                .build();
+
+        Board board= Board.builder()
+                .title("test")
+                .content("content")
+                .comments(new ArrayList<>())
+                .build();
+
+        Comment comment = Comment.builder()
+                .content("test_content")
+                .user(user)
+                .board(board)
+                .build();
+
+        comment.setBoard(board);
+
+        List<Comment> comments=new ArrayList<>();
+        comments.add(comment);
+
+
+        when(boardRepository.findById(any())).thenReturn(Optional.ofNullable(board));
+        when(commentRepository.findAllByBoard(any())).thenReturn(comments);
+
+        List<ResponseComment> results = commentService.getAllCommentByPost(1L);
+
+        assertThat(results.size()).isEqualTo(1);
+    }
+
 }
