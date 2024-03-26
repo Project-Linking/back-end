@@ -45,4 +45,9 @@ public class Comment {
         Optional.ofNullable(content).ifPresent(value -> this.content = value);
     }
 
+    public void setBoard(Board board){
+        this.board=board;
+        this.board.getComments().add(this);
+    }
+
 }
