@@ -3,6 +3,8 @@ package tukorea.projectlink.comment.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import tukorea.projectlink.comment.dto.RequestComment;
 import tukorea.projectlink.comment.dto.ResponseComment;
@@ -18,8 +20,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping()
-    public CommonResponse<ResponseComment> createComment(@RequestBody RequestComment requestComment) {
-        return CommonResponse.successWithData(commentService.createComment(requestComment));
+    public CommonResponse<ResponseComment> createComment(@AuthenticationPrincipal UserDetails userDetails, @RequestBody RequestComment requestComment) {
+        return CommonResponse.successWithData(commentService.createComment(userDetails, requestComment));
     }
 
     @GetMapping("/{board_id}")
@@ -28,13 +30,13 @@ public class CommentController {
     }
 
     @PatchMapping("/{comment_id}")
-    public CommonResponse<ResponseComment> updateComment(@PathVariable(name = "comment_id") Long commentId, @RequestBody RequestComment requestComment) {
-        return CommonResponse.successWithData(commentService.updateComment(commentId, requestComment));
+    public CommonResponse<ResponseComment> updateComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "comment_id") Long commentId, @RequestBody RequestComment requestComment) {
+        return CommonResponse.successWithData(commentService.updateComment(userDetails, commentId, requestComment));
     }
 
     @DeleteMapping("/{comment_id}")
-    public ResponseEntity<?> deleteComment(@PathVariable(name = "comment_id") Long commentId) {
-        commentService.deleteComment(commentId);
+    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "comment_id") Long commentId) {
+        commentService.deleteComment(userDetails, commentId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
