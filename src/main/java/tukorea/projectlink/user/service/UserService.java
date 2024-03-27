@@ -18,13 +18,14 @@ public class UserService {
 
     public void signUp(UserSignUpDto userSignUpDto) throws Exception {
         validateInputField(userSignUpDto);
-        User user = User.signupBuilder()
+
+        User user = User.builder()
                 .loginId(userSignUpDto.getLoginId())
                 .password(userSignUpDto.getPassword())
-                .passwordEncoder(passwordEncoder)
                 .nickname(userSignUpDto.getNickname())
                 .role(Role.USER)
                 .build();
+        user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
 

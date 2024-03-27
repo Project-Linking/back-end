@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -25,14 +24,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         UserDetails principal = (UserDetails)authentication.getPrincipal();
         String loginId = principal.getUsername();
         User user = userRepository.findByLoginId(loginId)
-                // TODO: 여기도 Custom RuntimeException 감싸
                 .orElseThrow(() -> new RuntimeException("회원정보를 찾을 수 없습니다."));
-        String accessToken = jwtService.createAccessToken(user.getLoginId());
+        String accessToken = jwtService.createAccessToken(String.valueOf(user.getId()));
         String refreshToken = jwtService.createRefreshToken();
         response.getWriter().write("AT: "+accessToken+"\n");
         response.getWriter().write("RT: "+refreshToken);
         user.updateRefreshToken(refreshToken);
         userRepository.saveAndFlush(user);
-        jwtService.sendAccessAndRefreshToken(response,accessToken,refreshToken);
+        jwtService.setJwtTokenToHeader(response,accessToken,refreshToken);
     }
 }

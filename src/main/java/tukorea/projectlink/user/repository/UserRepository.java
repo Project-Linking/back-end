@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-//    Optional<User> findByEmail(String email);
-
     Optional<User> findByLoginId(String loginId);
 
     Optional<User> findByNickname(String nickname);
@@ -19,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
+    Optional<User> findById(Long id);
+
+    Optional<User> findBySocialId(String id);
 }
