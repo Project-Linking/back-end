@@ -18,7 +18,6 @@ public class UserService {
 
     public void signUp(UserSignUpDto userSignUpDto) throws Exception {
         validateInputField(userSignUpDto);
-
         User user = User.builder()
                 .loginId(userSignUpDto.getLoginId())
                 .password(userSignUpDto.getPassword())
@@ -33,7 +32,6 @@ public class UserService {
         if(userRepository.findByLoginId(userSignUpDto.getLoginId()).isPresent()){
             throw new Exception("이미 존재하는 아이디입니다.");
         }
-
         if (userRepository.findByNickname(userSignUpDto.getNickname()).isPresent()) {
             throw new Exception("이미 존재하는 닉네임입니다.");
         }
