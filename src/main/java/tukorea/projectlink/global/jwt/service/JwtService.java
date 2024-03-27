@@ -35,7 +35,7 @@ public class JwtService {
     @Value("${jwt.refresh.header}")
     private String refreshTokenHeader;
 
-    private static final String USER_UNIQUE_CLAIM = "user_unique_nickname";
+    private static final String USER_UNIQUE_CLAIM = "user_unique_id";
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String TOKEN_TYPE = "Bearer ";
@@ -62,19 +62,19 @@ public class JwtService {
     }
 
     // RTR 방식 적용 , 헤더에 AccessToken 과 RefreshToken 설정 (최초 발급)
-    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+    public void setJwtTokenToHeader(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(accessTokenHeader, accessToken);
         response.setHeader(refreshTokenHeader, refreshToken);
     }
 
-    public Optional<String> extractUserUniqueId(String accessToken) throws JwtException {
+    public Optional<Long> extractUserUniqueId(String accessToken) throws JwtException {
         try{
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(jwtSecret))
                     .build()
                     .verify(accessToken)
                     .getClaim(USER_UNIQUE_CLAIM)
-                    .asString());
+                    .asLong());
         }catch(SignatureVerificationException e){
             throw new JwtException(JwtErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }catch(JWTDecodeException e){

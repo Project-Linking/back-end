@@ -32,9 +32,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // "/login" 이외의 모든 요청은 현재 필터를 거쳐 refresh 토큰을 검사한다.
         log.info("request URL {}",request.getRequestURI());
-        if(request.getRequestURI().equals("/login")){
+        // public api(인증이 필요없는 api) 는 해당 필터를 거치지 않도록 한다.
+        if(request.getRequestURI().equals("/api/public/**")){
             filterChain.doFilter(request,response);
             return;
         }
@@ -53,10 +53,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private void checkAccessToken(HttpServletRequest request,HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException, JwtException {
         jwtService.extractTokenFromRequestHeader(request, jwtService.getAccessTokenHeader())
                 .flatMap(jwtService::extractUserUniqueId)
-                .flatMap(userRepository::findByLoginId)
-                .ifPresentOrElse(this::saveAuthentication,()->log.info("missmatch accesstoken"));
+                .flatMap(userRepository::findById)
+                .ifPresentOrElse(this::saveAuthentication,()->new JwtException(JwtErrorCode.MISMATCH_ACCESSTOKEN));
         filterChain.doFilter(request,response);
     }
+
     private void saveAuthentication(User myUser) {
         String password = myUser.getPassword();
         if (password == null) { // 소셜 로그인 유저의 비밀번호 임의로 설정 하여 소셜 로그인 유저도 인증 되도록 설정
@@ -89,7 +90,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private void reissueTokens(User user, String refreshToken, HttpServletResponse response){
         user.updateRefreshToken(refreshToken);
         userRepository.saveAndFlush(user);
-        jwtService.sendAccessAndRefreshToken(
+        jwtService.setJwtTokenToHeader(
                 response,
                 jwtService.createAccessToken(user.getNickname()),
                 jwtService.createRefreshToken()
