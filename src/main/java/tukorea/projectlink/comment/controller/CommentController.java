@@ -14,27 +14,27 @@ import tukorea.projectlink.global.common.CommonResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping()
+    @PostMapping("/private/comment")
     public CommonResponse<ResponseComment> createComment(@AuthenticationPrincipal UserDetails userDetails, @RequestBody RequestComment requestComment) {
         return CommonResponse.successWithData(commentService.createComment(userDetails, requestComment));
     }
 
-    @GetMapping("/{board_id}")
+    @GetMapping("/public/comment/{board_id}")
     public CommonResponse<List<ResponseComment>> getAllCommentByBoard(@PathVariable(name = "board_id") Long id) {
         return CommonResponse.successWithData(commentService.getAllCommentByPost(id));
     }
 
-    @PatchMapping("/{comment_id}")
+    @PatchMapping("/private/comment/{comment_id}")
     public CommonResponse<ResponseComment> updateComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "comment_id") Long commentId, @RequestBody RequestComment requestComment) {
         return CommonResponse.successWithData(commentService.updateComment(userDetails, commentId, requestComment));
     }
 
-    @DeleteMapping("/{comment_id}")
+    @DeleteMapping("/private/comment/{comment_id}")
     public ResponseEntity<?> deleteComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "comment_id") Long commentId) {
         commentService.deleteComment(userDetails, commentId);
         return ResponseEntity.ok(HttpStatus.OK);
