@@ -5,6 +5,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -43,12 +45,12 @@ public class JwtService {
     private final UserRepository userRepository;
 
     // 액세스 토큰 발급
-    public String createAccessToken(String nickName) {
+    public String createAccessToken(String userId) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .withClaim(USER_UNIQUE_CLAIM, nickName)
+                .withClaim(USER_UNIQUE_CLAIM, userId)
                 .sign(Algorithm.HMAC512(jwtSecret));
     }
 
@@ -68,13 +70,13 @@ public class JwtService {
         response.setHeader(refreshTokenHeader, refreshToken);
     }
 
-    public Optional<Long> extractUserUniqueId(String accessToken) throws JwtException {
+    public Optional<String> extractUserUniqueId(String accessToken) throws JwtException {
         try{
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(jwtSecret))
                     .build()
                     .verify(accessToken)
                     .getClaim(USER_UNIQUE_CLAIM)
-                    .asLong());
+                    .asString());
         }catch(SignatureVerificationException e){
             throw new JwtException(JwtErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }catch(JWTDecodeException e){
