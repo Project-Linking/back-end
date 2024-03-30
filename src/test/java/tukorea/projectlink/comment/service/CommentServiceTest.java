@@ -25,7 +25,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
@@ -64,10 +64,9 @@ class CommentServiceTest {
     }
 
     private User createUser(String loginId, String nickname) {
-        return User.signupBuilder()
+        return User.builder()
                 .loginId(loginId)
                 .password("password")
-                .passwordEncoder(passwordEncoder)
                 .nickname(nickname)
                 .build();
     }

@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tukorea.projectlink.global.PasswordUtil;
 import tukorea.projectlink.global.jwt.exception.JwtErrorCode;
@@ -32,9 +33,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
         log.info("request URL {}",request.getRequestURI());
         // public api(인증이 필요없는 api) 는 해당 필터를 거치지 않도록 한다.
-        if(request.getRequestURI().equals("/api/public/**")){
+        if(antPathMatcher.match("/api/public/**",request.getRequestURI())){
             filterChain.doFilter(request,response);
             return;
         }
@@ -53,8 +55,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private void checkAccessToken(HttpServletRequest request,HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException, JwtException {
         jwtService.extractTokenFromRequestHeader(request, jwtService.getAccessTokenHeader())
                 .flatMap(jwtService::extractUserUniqueId)
-                .flatMap(userRepository::findById)
-                .ifPresentOrElse(this::saveAuthentication,()->new JwtException(JwtErrorCode.MISMATCH_ACCESSTOKEN));
+                .flatMap(id-> userRepository.findById(Long.parseLong(id)))
+                .ifPresentOrElse(this::saveAuthentication,()->{throw new JwtException(JwtErrorCode.MISMATCH_ACCESSTOKEN);});
         filterChain.doFilter(request,response);
     }
 
@@ -92,7 +94,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         userRepository.saveAndFlush(user);
         jwtService.setJwtTokenToHeader(
                 response,
-                jwtService.createAccessToken(user.getNickname()),
+                jwtService.createAccessToken(String.valueOf(user.getId())),
                 jwtService.createRefreshToken()
         );
     }
