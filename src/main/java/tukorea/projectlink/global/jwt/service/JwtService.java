@@ -5,8 +5,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tukorea.projectlink.global.jwt.exception.JwtErrorCode;
 import tukorea.projectlink.global.jwt.exception.JwtException;
-import tukorea.projectlink.user.repository.UserRepository;
 
 import java.util.Date;
 import java.util.Optional;
@@ -26,6 +23,11 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public class JwtService {
+    private static final String USER_UNIQUE_CLAIM = "user_unique_id";
+    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
+    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+    private static final String TOKEN_TYPE = "Bearer ";
+
     @Value("${jwt.secretKey}")
     private String jwtSecret;
     @Value("${jwt.access.expiration}")
@@ -36,13 +38,6 @@ public class JwtService {
     private Long refreshTokenExpirationPeriod;
     @Value("${jwt.refresh.header}")
     private String refreshTokenHeader;
-
-    private static final String USER_UNIQUE_CLAIM = "user_unique_id";
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String TOKEN_TYPE = "Bearer ";
-
-    private final UserRepository userRepository;
 
     // 액세스 토큰 발급
     public String createAccessToken(String userId) {
@@ -71,33 +66,33 @@ public class JwtService {
     }
 
     public Optional<String> extractUserUniqueId(String accessToken) throws JwtException {
-        try{
+        try {
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(jwtSecret))
                     .build()
                     .verify(accessToken)
                     .getClaim(USER_UNIQUE_CLAIM)
                     .asString());
-        }catch(SignatureVerificationException e){
+        } catch (SignatureVerificationException e) {
             throw new JwtException(JwtErrorCode.SIGNATURE_VERIFICATION_FAILED);
-        }catch(JWTDecodeException e){
+        } catch (JWTDecodeException e) {
             throw new JwtException(JwtErrorCode.DECODE_FAILED);
         }
     }
 
     public Optional<String> extractTokenFromRequestHeader(HttpServletRequest request, String headerType) {
         return Optional.ofNullable(request.getHeader(headerType))
-                .map(token->token.replace(TOKEN_TYPE,""));
+                .map(token -> token.replace(TOKEN_TYPE, ""));
     }
 
-    public boolean isValidToken(String token){
-        try{
+    public boolean isValidToken(String token) {
+        try {
             JWT.require(Algorithm.HMAC512(jwtSecret))
                     .build()
                     .verify(token);
             return true;
-        }catch(SignatureVerificationException e){
+        } catch (SignatureVerificationException e) {
             throw new JwtException(JwtErrorCode.SIGNATURE_VERIFICATION_FAILED);
-        }catch(JWTDecodeException e){
+        } catch (JWTDecodeException e) {
             throw new JwtException(JwtErrorCode.DECODE_FAILED);
         }
     }
