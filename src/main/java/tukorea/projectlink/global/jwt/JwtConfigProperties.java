@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 public class JwtConfigProperties {
     private final String secretKey;
-    private final String accessExpiration;
+    private final Long accessExpiration;
     private final String accessHeader;
-    private final String refreshExpiration;
+    private final Long refreshExpiration;
     private final String refreshHeader;
 }

@@ -9,16 +9,8 @@ import java.util.Optional;
 
 class JwtServiceTest {
 
-    private final JwtService jwtService = new JwtService();
-
-//    @BeforeEach
-//    void setUp() throws IllegalAccessException {
-//        ReflectionTestUtils.setField(jwtService, "jwtSecret", "44WB44WI44S344S566i47J6z65+s66iA44WQ44WI44S365+s44WQ44WR44WB44WIO+OFk+OEtzvrnpjjhZHjhZPjhYHsnqzjhZHrn6zrjJzjhZDjhYHsoIDrnrTjhZDjhYjrqLjrjIDjhZHroILrp6TjhZHjhZPrnpjjhZHjhLfjhYjrqLjjhZDjhZHrn7zjhYjrjIg=");
-//        ReflectionTestUtils.setField(jwtService, "accessTokenExpirationPeriod", 10000L);
-//        ReflectionTestUtils.setField(jwtService, "refreshTokenExpirationPeriod", 10000L);
-//        ReflectionTestUtils.setField(jwtService, "accessTokenHeader", "Authorization");
-//        ReflectionTestUtils.setField(jwtService, "refreshTokenHeader", "Authorization-refresh");
-//    }
+    private final JwtConfigPropertiesTest jwtConfigPropertiesTest = new JwtConfigPropertiesTest();
+    private final JwtService jwtService = new JwtService(jwtConfigPropertiesTest);
 
     @Test
     @DisplayName("생성한 액세스 토큰은 유효한 토큰이여야한다.")
