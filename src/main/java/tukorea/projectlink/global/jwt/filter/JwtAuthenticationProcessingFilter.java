@@ -45,7 +45,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        Optional<String> refreshToken = jwtService.extractTokenFromRequestHeader(request, props.getRefresh().getHeader())
+        Optional<String> refreshToken = jwtService.extractTokenFromRequestHeader(request, props.getRefreshHeader())
                 .filter(jwtService::isValidToken);
 
         if (refreshToken.isPresent()) {
@@ -57,7 +57,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     private void checkAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, JwtException {
-        jwtService.extractTokenFromRequestHeader(request, props.getAccess().getHeader())
+        jwtService.extractTokenFromRequestHeader(request, props.getAccessHeader())
                 .flatMap(jwtService::extractUserUniqueId)
                 .flatMap(id -> userRepository.findById(Long.parseLong(id)))
                 .ifPresentOrElse(this::saveAuthentication, () -> {

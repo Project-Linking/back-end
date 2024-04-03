@@ -34,7 +34,7 @@ public class JwtService {
         Date now = new Date();
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + props.getAccess().getExpiration()))
+                .withExpiresAt(new Date(now.getTime() + props.getAccessExpiration()))
                 .withClaim(USER_UNIQUE_CLAIM, userId)
                 .sign(Algorithm.HMAC512(props.getSecretKey()));
     }
@@ -44,15 +44,15 @@ public class JwtService {
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + props.getRefresh().getExpiration()))
+                .withExpiresAt(new Date(now.getTime() + props.getRefreshExpiration()))
                 .sign(Algorithm.HMAC512(props.getSecretKey()));
     }
 
     // RTR 방식 적용 , 헤더에 AccessToken 과 RefreshToken 설정 (최초 발급)
     public void setJwtTokenToHeader(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
-        response.setHeader(props.getAccess().getHeader(), accessToken);
-        response.setHeader(props.getRefresh().getHeader(), refreshToken);
+        response.setHeader(props.getAccessHeader(), accessToken);
+        response.setHeader(props.getRefreshHeader(), refreshToken);
     }
 
     public Optional<String> extractUserUniqueId(String accessToken) throws JwtException {
