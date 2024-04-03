@@ -7,15 +7,14 @@ import tukorea.projectlink.global.oauth2.userinfo.NaverOAuth2UserInfo;
 import tukorea.projectlink.global.oauth2.userinfo.OAuth2UserInfo;
 import tukorea.projectlink.user.Role;
 import tukorea.projectlink.user.SocialType;
-import tukorea.projectlink.user.User;
+import tukorea.projectlink.user.domain.User;
 
 import java.util.Map;
-import java.util.UUID;
 
 @Getter
 public class OAuthAttributes {
-    private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
-    private OAuth2UserInfo oauth2UserInfo; // 소셜 타입별 로그인 유저 정보(닉네임, 이메일, 프로필 사진 등등)
+    private final String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
+    private final OAuth2UserInfo oauth2UserInfo; // 소셜 타입별 로그인 유저 정보(닉네임, 이메일, 프로필 사진 등등)
 
     @Builder
     private OAuthAttributes(String nameAttributeKey, OAuth2UserInfo oauth2UserInfo) {
@@ -34,8 +33,7 @@ public class OAuthAttributes {
 
         if (socialType == SocialType.NAVER) {
             return ofNaver(userNameAttributeName, attributes);
-        }
-        else
+        } else
             return ofKakao(userNameAttributeName, attributes);
     }
 
@@ -53,7 +51,7 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public User toEntity(SocialType socialType,OAuth2UserInfo oauth2UserInfo) {
+    public User toEntity(SocialType socialType, OAuth2UserInfo oauth2UserInfo) {
         return User.builder()
                 .socialType(socialType)
                 .socialId(oauth2UserInfo.getId())
