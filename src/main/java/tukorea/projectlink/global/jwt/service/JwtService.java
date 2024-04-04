@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import tukorea.projectlink.global.jwt.JwtConfigProperties;
 import tukorea.projectlink.global.jwt.exception.JwtErrorCode;
 import tukorea.projectlink.global.jwt.exception.JwtException;
 
@@ -27,26 +27,16 @@ public class JwtService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String TOKEN_TYPE = "Bearer ";
-
-    @Value("${jwt.secretKey}")
-    private String jwtSecret;
-    @Value("${jwt.access.expiration}")
-    private Long accessTokenExpirationPeriod;
-    @Value("${jwt.access.header}")
-    private String accessTokenHeader;
-    @Value("${jwt.refresh.expiration}")
-    private Long refreshTokenExpirationPeriod;
-    @Value("${jwt.refresh.header}")
-    private String refreshTokenHeader;
+    private final JwtConfigProperties props;
 
     // 액세스 토큰 발급
     public String createAccessToken(String userId) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
+                .withExpiresAt(new Date(now.getTime() + props.getAccessExpiration()))
                 .withClaim(USER_UNIQUE_CLAIM, userId)
-                .sign(Algorithm.HMAC512(jwtSecret));
+                .sign(Algorithm.HMAC512(props.getSecretKey()));
     }
 
     // 리프레쉬 토큰 발급
@@ -54,20 +44,20 @@ public class JwtService {
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .sign(Algorithm.HMAC512(jwtSecret));
+                .withExpiresAt(new Date(now.getTime() + props.getRefreshExpiration()))
+                .sign(Algorithm.HMAC512(props.getSecretKey()));
     }
 
     // RTR 방식 적용 , 헤더에 AccessToken 과 RefreshToken 설정 (최초 발급)
     public void setJwtTokenToHeader(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
-        response.setHeader(accessTokenHeader, accessToken);
-        response.setHeader(refreshTokenHeader, refreshToken);
+        response.setHeader(props.getAccessHeader(), accessToken);
+        response.setHeader(props.getRefreshHeader(), refreshToken);
     }
 
     public Optional<String> extractUserUniqueId(String accessToken) throws JwtException {
         try {
-            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(jwtSecret))
+            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(props.getSecretKey()))
                     .build()
                     .verify(accessToken)
                     .getClaim(USER_UNIQUE_CLAIM)
@@ -86,7 +76,7 @@ public class JwtService {
 
     public boolean isValidToken(String token) {
         try {
-            JWT.require(Algorithm.HMAC512(jwtSecret))
+            JWT.require(Algorithm.HMAC512(props.getSecretKey()))
                     .build()
                     .verify(token);
             return true;

@@ -2,9 +2,6 @@ package tukorea.projectlink.global;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.StaticResourceLocation;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.boot.autoconfigure.security.servlet.StaticResourceRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +9,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -48,6 +44,7 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -60,11 +57,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors-> corsConfigurationSource())
+                .cors(cors -> corsConfigurationSource())
                 .headers(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**","/api/public/**").permitAll()
+                        .requestMatchers("/**", "/api/public/**").permitAll()
                         .requestMatchers("/login/oauth2/code/naver", "/login/oauth2/kakao").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
@@ -72,7 +69,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler))
-                .addFilterBefore(jwtAuthenticationProcessingFilter(), LogoutFilter.class)
+                .addFilterBefore(jwtAuthenticationProcessingFilter, LogoutFilter.class)
                 .addFilterAfter(jwtExceptionHandlerFilter(), JwtAuthenticationProcessingFilter.class)
                 .addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
         return http.build();
@@ -119,10 +116,10 @@ public class SecurityConfig {
         return filter;
     }
 
-    @Bean
-    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        return new JwtAuthenticationProcessingFilter(jwtService, userRepository);
-    }
+//    @Bean
+//    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+//        return new JwtAuthenticationProcessingFilter(jwtService, userRepository);
+//    }
 
     @Bean
     public JwtExceptionHandlerFilter jwtExceptionHandlerFilter() {

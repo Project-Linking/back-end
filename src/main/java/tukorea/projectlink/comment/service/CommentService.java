@@ -10,7 +10,7 @@ import tukorea.projectlink.comment.domain.Comment;
 import tukorea.projectlink.comment.dto.RequestComment;
 import tukorea.projectlink.comment.dto.ResponseComment;
 import tukorea.projectlink.comment.repository.CommentRepository;
-import tukorea.projectlink.user.User;
+import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.repository.UserRepository;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class CommentService {
         User user = userRepository.findByLoginId(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if(!comment.getUser().equals(user)){
+        if (!comment.getUser().equals(user)) {
             throw new IllegalStateException("댓글을 수정할 권한이 없습니다.");
         }
         comment.updateComment(requestComment.getContent());
@@ -77,7 +77,7 @@ public class CommentService {
         User user = userRepository.findByLoginId(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if(!comment.getUser().equals(user)){
+        if (!comment.getUser().equals(user)) {
             throw new IllegalStateException("댓글을 수정할 권한이 없습니다.");
         }
 

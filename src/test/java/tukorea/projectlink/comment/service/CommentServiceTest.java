@@ -15,7 +15,7 @@ import tukorea.projectlink.comment.domain.Comment;
 import tukorea.projectlink.comment.dto.RequestComment;
 import tukorea.projectlink.comment.dto.ResponseComment;
 import tukorea.projectlink.comment.repository.CommentRepository;
-import tukorea.projectlink.user.User;
+import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.repository.UserRepository;
 
 import java.util.ArrayList;

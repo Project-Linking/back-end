@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import tukorea.projectlink.board.domain.Board;
-import tukorea.projectlink.user.User;
+import tukorea.projectlink.user.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +41,12 @@ public class Comment {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> replies = new ArrayList<>();
 
-    public void updateComment(String content){
+    public void updateComment(String content) {
         Optional.ofNullable(content).ifPresent(value -> this.content = value);
     }
 
-    public void setBoard(Board board){
-        this.board=board;
+    public void setBoard(Board board) {
+        this.board = board;
         this.board.getComments().add(this);
     }
 
