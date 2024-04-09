@@ -11,7 +11,6 @@ import tukorea.projectlink.user.SocialType;
 
 @Entity
 @Getter
-@Table(name = "USERS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
@@ -20,14 +19,14 @@ public class User {
     private Long id;
 
     private String loginId;
-    private String password; // 비밀번호
-    private String nickname; // 닉네임
+    private String password;
+    private String nickname;
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)
-    private SocialType socialType; // KAKAO, NAVER, GOOGLE
-    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
-    private String refreshToken; // 리프레시 토큰
+    private SocialType socialType;
+    private String socialId;
+    private String refreshToken;
 
     @Builder
     public User(String loginId, String password, String nickname, Role role, SocialType socialType, String socialId, String refreshToken) {
