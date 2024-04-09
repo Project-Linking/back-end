@@ -39,9 +39,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
-        log.info("request URL {}", request.getRequestURI());
+        String requestUrl = request.getRequestURI();
+        log.info("request URL {}", requestUrl);
         // public api(인증이 필요없는 api) 는 해당 필터를 거치지 않도록 한다.
-        if (antPathMatcher.match("/api/public/**", request.getRequestURI())) {
+        if (antPathMatcher.match("/api/public/**", requestUrl) || antPathMatcher.match("/oauth2/**", requestUrl) || antPathMatcher.match("/login/oauth2/**", requestUrl)) {
             filterChain.doFilter(request, response);
             return;
         }

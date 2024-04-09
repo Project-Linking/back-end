@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .headers(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**", "/api/public/**").permitAll()
+                        .requestMatchers("/**", "/api/public/**", "/favicon.ico").permitAll()
                         .requestMatchers("/login/oauth2/code/naver", "/login/oauth2/kakao").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
@@ -88,7 +88,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8081"));
+        config.setAllowedOrigins(List.of("http://localhost:3030"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
