@@ -33,7 +33,7 @@ public class CommonResponse<ResponseData> {
     /**
      * 에러 코드를 포함하는 실패 응답
      */
-    public static CommonResponse<?> faileWithErrorCode(CommonError commonError){
+    public static CommonResponse<?> failureWithErrorCode(CommonError commonError){
         return new CommonResponse<>(false,null,commonError);
     }
 
