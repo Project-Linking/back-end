@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tukorea.projectlink.user.Role;
 import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.dto.UserSignUpRequestDto;
 import tukorea.projectlink.user.exception.UserErrorCode;
@@ -17,16 +16,11 @@ import tukorea.projectlink.user.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     public void signUp(UserSignUpRequestDto userSignUpDto) throws Exception {
         validateInputField(userSignUpDto);
-        User user = User.builder()
-                .loginId(userSignUpDto.loginId())
-                .password(userSignUpDto.password())
-                .nickname(userSignUpDto.nickname())
-                .role(Role.USER)
-                .build();
-        user.passwordEncode(passwordEncoder);
+        User user = userMapper.mapFrom(userSignUpDto);
         userRepository.save(user);
     }
 
