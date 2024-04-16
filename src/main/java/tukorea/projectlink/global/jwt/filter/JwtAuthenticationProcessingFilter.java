@@ -26,6 +26,8 @@ import tukorea.projectlink.user.repository.UserRepository;
 import java.io.IOException;
 import java.util.Optional;
 
+import static org.springframework.security.core.userdetails.User.builder;
+
 @RequiredArgsConstructor
 @Slf4j
 @Component
@@ -73,7 +75,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             password = PasswordUtil.getRandomPassword();
         }
 
-        UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+        UserDetails userDetailsUser = builder()
                 .username(myUser.getLoginId())
                 .password(password)
                 .roles(myUser.getRole().name())

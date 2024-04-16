@@ -1,4 +1,4 @@
-package tukorea.projectlink.global.exceptionhandler;
+package tukorea.projectlink.global.jwt.exceptionhandler;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,7 +9,7 @@ import tukorea.projectlink.global.jwt.exception.JwtException;
 public class JwtExceptionHandler {
 
     @ExceptionHandler({JwtException.class})
-    public CommonResponse<?> handleAuthenticationException(JwtException e){
-        return CommonResponse.faileWithErrorCode(e.getJwtErrorCode());
+    public CommonResponse<?> handleAuthenticationException(JwtException e) {
+        return CommonResponse.failureWithErrorCode(e.getJwtErrorCode());
     }
 }

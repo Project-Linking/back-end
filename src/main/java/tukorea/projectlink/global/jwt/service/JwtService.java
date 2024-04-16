@@ -55,6 +55,10 @@ public class JwtService {
         response.setHeader(props.getRefreshHeader(), refreshToken);
     }
 
+    public void setAccessTokenToHeader(HttpServletResponse response, String accessToken){
+        response.setHeader(props.getAccessHeader(),accessToken);
+    }
+
     public Optional<String> extractUserUniqueId(String accessToken) throws JwtException {
         try {
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(props.getSecretKey()))

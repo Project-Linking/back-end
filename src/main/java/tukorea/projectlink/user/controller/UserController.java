@@ -1,10 +1,14 @@
 package tukorea.projectlink.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import tukorea.projectlink.global.common.CommonResponse;
-import tukorea.projectlink.user.dto.UserSignUpDto;
+import tukorea.projectlink.user.dto.UserSignUpRequest;
 import tukorea.projectlink.user.service.UserService;
 
 @RestController
@@ -14,15 +18,10 @@ import tukorea.projectlink.user.service.UserService;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/login/oauth2/code/kakao")
-    public String success() {
-        return "성공";
-    }
-
     @PostMapping("/public/sign-up")
-    public CommonResponse<?> signUp(@RequestBody UserSignUpDto userSignUpDto) throws Exception {
+    public CommonResponse<?> signUp(@RequestBody @Valid UserSignUpRequest userSignUpDto) throws Exception {
         userService.signUp(userSignUpDto);
-        log.info("Sign-Up Success : nickname={}",userSignUpDto.getNickname());
+        log.info("Sign-Up Success : nickname={}", userSignUpDto.nickname());
         return CommonResponse.successWithEmptyData();
     }
 }

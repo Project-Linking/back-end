@@ -29,8 +29,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .orElseThrow(() -> new RuntimeException("회원정보를 찾을 수 없습니다."));
         String accessToken = jwtService.createAccessToken(String.valueOf(user.getId()));
         String refreshToken = jwtService.createRefreshToken();
+        // TODO : 운영환경에서 제외
         response.getWriter().write("AT: " + accessToken + "\n");
         response.getWriter().write("RT: " + refreshToken);
+        //
         user.updateRefreshToken(refreshToken);
         userRepository.saveAndFlush(user);
         jwtService.setJwtTokenToHeader(response, accessToken, refreshToken);
