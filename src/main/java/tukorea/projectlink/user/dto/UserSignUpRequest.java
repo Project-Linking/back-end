@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
-public record UserSignUpRequestDto(
+public record UserSignUpRequest(
         @Size(min = 5, message = "아이디는 5자 이상이여야 합니다.")
         @NotBlank(message = "로그인 아이디는 필수 입력입니다.")
         String loginId,
