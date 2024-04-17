@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,6 +26,7 @@ import tukorea.projectlink.global.login.filter.CustomJsonUsernamePasswordAuthent
 import tukorea.projectlink.global.login.handler.LoginFailuerHandler;
 import tukorea.projectlink.global.login.handler.LoginSuccessHandler;
 import tukorea.projectlink.global.login.service.CustomUserDetailsService;
+import tukorea.projectlink.global.oauth2.filter.OAuth2ExceptionHandlerFilter;
 import tukorea.projectlink.global.oauth2.handler.OAuth2LoginFailureHandler;
 import tukorea.projectlink.global.oauth2.handler.OAuth2LoginSuccessHandler;
 import tukorea.projectlink.global.oauth2.service.CustomOAuth2UserService;
@@ -71,7 +73,8 @@ public class SecurityConfig {
                         .failureHandler(oAuth2LoginFailureHandler))
                 .addFilterBefore(jwtAuthenticationProcessingFilter, LogoutFilter.class)
                 .addFilterAfter(jwtExceptionHandlerFilter(), JwtAuthenticationProcessingFilter.class)
-                .addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
+                .addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
+                .addFilterAfter(oAuth2ExceptionHandlerFilter(), OAuth2LoginAuthenticationFilter.class);
         return http.build();
     }
 
@@ -116,14 +119,14 @@ public class SecurityConfig {
         return filter;
     }
 
-//    @Bean
-//    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-//        return new JwtAuthenticationProcessingFilter(jwtService, userRepository);
-//    }
-
     @Bean
     public JwtExceptionHandlerFilter jwtExceptionHandlerFilter() {
         return new JwtExceptionHandlerFilter();
+    }
+
+    @Bean
+    public OAuth2ExceptionHandlerFilter oAuth2ExceptionHandlerFilter() {
+        return new OAuth2ExceptionHandlerFilter();
     }
 
 }
