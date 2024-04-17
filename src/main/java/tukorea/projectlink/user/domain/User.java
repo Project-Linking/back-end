@@ -15,6 +15,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    private final List<Interests> interests = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -22,11 +25,6 @@ public class User {
     private String loginId;
     private String password;
     private String nickname;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "MEMBER_ID")
-    private final List<Interests> interests = new ArrayList<>();
-
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)

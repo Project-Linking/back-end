@@ -21,6 +21,7 @@ import static tukorea.projectlink.user.exception.UserErrorCode.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final InterestsMapper interestsMapper;
     private final UserMapper userMapper;
 
     @Transactional
@@ -32,16 +33,44 @@ public class UserService {
 
     @Transactional
     public void saveInterests(InterestsRequest interestsRequest, UserDetails userdetails) {
-        String userLoginId = userdetails.getUsername();
-        User user = userRepository.findByLoginId(userLoginId)
+        User user = userRepository.findByLoginId(userdetails.getUsername())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        List<Interests> userInterests = interestsRequest.interests()
-                .stream()
-                .map(Interests::new)
-                .toList();
+        List<Interests> oldInterests = user.getInterests();
+        List<Interests> newInterests = interestsMapper.mapFrom(interestsRequest);
 
-        user.getInterests().addAll(userInterests);
+        if (oldInterests.isEmpty()) {
+            saveNewInterests(interestsRequest, user);
+        } else {
+            updateNewInterests(oldInterests, newInterests);
+            removeOldInterests(oldInterests, newInterests);
+        }
+    }
+
+    private void removeOldInterests(List<Interests> oldInterests, List<Interests> newInterests) {
+        oldInterests.removeAll(
+                oldInterests.stream()
+                        .filter(interests -> !newInterests.contains(interests))
+                        .toList()
+        );
+    }
+
+    private void updateNewInterests(List<Interests> oldInterests, List<Interests> newInterests) {
+        oldInterests.addAll(
+                newInterests
+                        .stream()
+                        .filter(newType -> !oldInterests.contains(newType))
+                        .toList()
+        );
+    }
+
+    private void saveNewInterests(InterestsRequest interestsRequest, User user) {
+        user.getInterests().addAll(
+                interestsRequest.interests()
+                        .stream()
+                        .map(Interests::new)
+                        .toList()
+        );
     }
 
     private void validateInputField(UserSignUpRequest userSignUpDto) throws UserException {

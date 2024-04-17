@@ -22,14 +22,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/public/sign-up")
-    public CommonResponse<?> signUp(@RequestBody @Valid UserSignUpRequest userSignUpDto) throws Exception {
+    public CommonResponse<?> signUp(@RequestBody @Valid UserSignUpRequest userSignUpDto) {
         userService.signUp(userSignUpDto);
         log.info("Sign-Up Success : nickname={}", userSignUpDto.nickname());
         return CommonResponse.successWithEmptyData();
     }
 
-    @PostMapping("/public/interests")
-    public CommonResponse<?> saveInterests(@RequestBody InterestsRequest interestsRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    @PostMapping("/private/interests")
+    public CommonResponse<?> saveInterests(@AuthenticationPrincipal UserDetails userDetails, @RequestBody InterestsRequest interestsRequest) {
         userService.saveInterests(interestsRequest, userDetails);
         return CommonResponse.successWithEmptyData();
     }
