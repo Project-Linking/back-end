@@ -12,7 +12,7 @@ import tukorea.projectlink.global.oauth2.CustomOAuth2User;
 import tukorea.projectlink.global.oauth2.OAuthAttributes;
 import tukorea.projectlink.global.oauth2.userinfo.OAuth2UserInfo;
 import tukorea.projectlink.user.SocialType;
-import tukorea.projectlink.user.User;
+import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.repository.UserRepository;
 
 import java.util.Collections;
@@ -20,11 +20,10 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class CustomOAuth2UserService extends DefaultOAuth2UserService{
-    private final UserRepository userRepository;
-
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private static final String NAVER = "naver";
     private static final String KAKAO = "kakao";
+    private final UserRepository userRepository;
     private OAuth2UserInfo oAuth2UserInfo;
 
     @Override
@@ -36,13 +35,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         SocialType socialType = getSocialType(registrationId);
         String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); // OAuth2 로그인 시 키(PK)가 되는 값
-        Map<String, Object> attributes = oAuth2User.getAttributes(); // 소셜 로그인에서 API가 제공하는 userInfo의 Json 값(유저 정보들)
+                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
         OAuthAttributes extractAttributes = OAuthAttributes.of(socialType, userNameAttributeName, attributes);
-        oAuth2UserInfo= extractAttributes.getOauth2UserInfo();
+        oAuth2UserInfo = extractAttributes.getOauth2UserInfo();
 
-        User createdUser = getUser(extractAttributes, socialType); // getUser() 메소드로 User 객체 생성 후 반환
+        User createdUser = getUser(extractAttributes, socialType);
         return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(createdUser.getRole().getKey())),
                 attributes,
@@ -53,10 +52,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
     }
 
     private SocialType getSocialType(String registrationId) {
-        if(NAVER.equals(registrationId)) {
+        if (NAVER.equals(registrationId)) {
             return SocialType.NAVER;
-        }
-        else
+        } else
             return SocialType.KAKAO;
 
     }
@@ -64,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
     private User getUser(OAuthAttributes attributes, SocialType socialType) {
         User findUser = userRepository.findBySocialTypeAndSocialId(socialType,
                 attributes.getOauth2UserInfo().getId()).orElse(null);
-        if(findUser == null) {
+        if (findUser == null) {
             return saveUser(attributes, socialType);
         }
         return findUser;

@@ -12,52 +12,61 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tukorea.projectlink.global.PasswordUtil;
+import tukorea.projectlink.global.jwt.JwtConfigProperties;
 import tukorea.projectlink.global.jwt.exception.JwtErrorCode;
 import tukorea.projectlink.global.jwt.exception.JwtException;
 import tukorea.projectlink.global.jwt.service.JwtService;
-import tukorea.projectlink.user.User;
+import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.repository.UserRepository;
 
 import java.io.IOException;
+import java.util.Optional;
+
+import static org.springframework.security.core.userdetails.User.builder;
 
 @RequiredArgsConstructor
 @Slf4j
+@Component
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+    private final JwtConfigProperties props;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
-        log.info("request URL {}",request.getRequestURI());
+        String requestUrl = request.getRequestURI();
+        log.info("request URL {}", requestUrl);
         // public api(인증이 필요없는 api) 는 해당 필터를 거치지 않도록 한다.
-        if(antPathMatcher.match("/api/public/**",request.getRequestURI())){
-            filterChain.doFilter(request,response);
+        if (antPathMatcher.match("/api/public/**", requestUrl) || antPathMatcher.match("/oauth2/**", requestUrl) || antPathMatcher.match("/login/oauth2/**", requestUrl)) {
+            filterChain.doFilter(request, response);
             return;
         }
-        String refreshToken = jwtService.extractTokenFromRequestHeader(request, jwtService.getRefreshTokenHeader())
-                .filter(jwtService::isValidToken)
-                .orElse(null);
+        Optional<String> refreshToken = jwtService.extractTokenFromRequestHeader(request, props.getRefreshHeader())
+                .filter(jwtService::isValidToken);
 
-        if(refreshToken != null){
-            checkRefreshTokenToDb(refreshToken,response);
+        if (refreshToken.isPresent()) {
+            checkRefreshTokenToDb(refreshToken.get(), response);
             return;
         }
 
         checkAccessToken(request, response, filterChain);
     }
 
-    private void checkAccessToken(HttpServletRequest request,HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException, JwtException {
-        jwtService.extractTokenFromRequestHeader(request, jwtService.getAccessTokenHeader())
+    private void checkAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, JwtException {
+        jwtService.extractTokenFromRequestHeader(request, props.getAccessHeader())
                 .flatMap(jwtService::extractUserUniqueId)
-                .flatMap(id-> userRepository.findById(Long.parseLong(id)))
-                .ifPresentOrElse(this::saveAuthentication,()->{throw new JwtException(JwtErrorCode.MISMATCH_ACCESSTOKEN);});
-        filterChain.doFilter(request,response);
+                .flatMap(id -> userRepository.findById(Long.parseLong(id)))
+                .ifPresentOrElse(this::saveAuthentication, () -> {
+                    throw new JwtException(JwtErrorCode.MISMATCH_ACCESSTOKEN);
+                });
+        filterChain.doFilter(request, response);
     }
 
     private void saveAuthentication(User myUser) {
@@ -66,7 +75,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             password = PasswordUtil.getRandomPassword();
         }
 
-        UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+        UserDetails userDetailsUser = builder()
                 .username(myUser.getLoginId())
                 .password(password)
                 .roles(myUser.getRole().name())
@@ -79,17 +88,17 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private void checkRefreshTokenToDb(String refreshToken,HttpServletResponse response) throws JwtException{
-        if(jwtService.isValidToken(refreshToken)){
+    private void checkRefreshTokenToDb(String refreshToken, HttpServletResponse response) throws JwtException {
+        if (jwtService.isValidToken(refreshToken)) {
             userRepository.findByRefreshToken(refreshToken)
                     .ifPresentOrElse(
-                            user->reissueTokens(user, jwtService.createRefreshToken(),response),
-                            ()->new JwtException(JwtErrorCode.MISMATCH_REFRESHTOKEN)
-                            );
+                            user -> reissueTokens(user, jwtService.createRefreshToken(), response),
+                            () -> new JwtException(JwtErrorCode.MISMATCH_REFRESHTOKEN)
+                    );
         }
     }
 
-    private void reissueTokens(User user, String refreshToken, HttpServletResponse response){
+    private void reissueTokens(User user, String refreshToken, HttpServletResponse response) {
         user.updateRefreshToken(refreshToken);
         userRepository.saveAndFlush(user);
         jwtService.setJwtTokenToHeader(

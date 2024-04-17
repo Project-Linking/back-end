@@ -13,17 +13,16 @@ import tukorea.projectlink.global.jwt.exception.JwtException;
 import java.io.IOException;
 
 public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
-
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try{
-            filterChain.doFilter(request,response);
-        }catch(JwtException e){
-            handlerExceptionResolver.resolveException(request,response,null,e);
+        try {
+            filterChain.doFilter(request, response);
+        } catch (JwtException e) {
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }
 }
