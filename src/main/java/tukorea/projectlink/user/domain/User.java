@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import tukorea.projectlink.user.Role;
 import tukorea.projectlink.user.SocialType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +22,11 @@ public class User {
     private String loginId;
     private String password;
     private String nickname;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "MEMBER_ID")
+    private final List<Interests> interests = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)

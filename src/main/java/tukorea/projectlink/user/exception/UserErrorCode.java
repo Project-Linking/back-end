@@ -7,7 +7,8 @@ import tukorea.projectlink.global.common.CommonError;
 public enum UserErrorCode implements CommonError {
 
     ARGUMENT_NOT_VALID("USER-001", "MAL_INPUT"),
-    DUPLICATED_DATA_REQUEST("USER-002", "DUPLICATED_DATA");
+    DUPLICATED_DATA_REQUEST("USER-002", "DUPLICATED_DATA"),
+    USER_NOT_FOUND("USER-003", "회원을 찾을 수 없습니다.");
 
     private final String code;
     private String description;
