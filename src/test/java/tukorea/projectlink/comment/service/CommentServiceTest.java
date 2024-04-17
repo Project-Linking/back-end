@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.respository.BoardRepository;
 import tukorea.projectlink.comment.domain.Comment;
-import tukorea.projectlink.comment.dto.RequestComment;
-import tukorea.projectlink.comment.dto.ResponseComment;
+import tukorea.projectlink.comment.dto.CommentRequest;
+import tukorea.projectlink.comment.dto.CommentResponse;
 import tukorea.projectlink.comment.repository.CommentRepository;
 import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.repository.UserRepository;
@@ -94,7 +94,7 @@ class CommentServiceTest {
     void createComment() {
         //given
         when(userA.getUsername()).thenReturn("loginId");
-        RequestComment requestComment = RequestComment.builder()
+        CommentRequest commentRequest = CommentRequest.builder()
                 .boardId(1L)
                 .content("test_content")
                 .build();
@@ -104,7 +104,7 @@ class CommentServiceTest {
         when(boardRepository.findById(any())).thenReturn(Optional.ofNullable(Board.builder().build()));
         when(commentRepository.save(any())).thenReturn(comment);
 
-        ResponseComment result = commentService.createComment(userA, requestComment);
+        CommentResponse result = commentService.createComment(userA, commentRequest);
 
         //then
         assertThat(result).isNotNull();
@@ -123,7 +123,7 @@ class CommentServiceTest {
         when(boardRepository.findById(any())).thenReturn(Optional.ofNullable(board));
         when(commentRepository.findAllByBoard(any())).thenReturn(comments);
 
-        List<ResponseComment> results = commentService.getAllCommentByPost(1L);
+        List<CommentResponse> results = commentService.getAllCommentByPost(1L);
 
         //then
         assertThat(results.size()).isEqualTo(1);
@@ -135,7 +135,7 @@ class CommentServiceTest {
         //given
         when(userA.getUsername()).thenReturn("loginId");
 
-        RequestComment requestComment = RequestComment.builder()
+        CommentRequest commentRequest = CommentRequest.builder()
                 .content("test_content")
                 .build();
 
@@ -143,7 +143,7 @@ class CommentServiceTest {
         when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(this.user1));
         when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
 
-        ResponseComment result = commentService.updateComment(userA, 1L, requestComment);
+        CommentResponse result = commentService.updateComment(userA, 1L, commentRequest);
 
         //then
         assertThat(result.getContent()).isEqualTo("test_content");
@@ -153,14 +153,14 @@ class CommentServiceTest {
     @DisplayName("실패: 유저A가 작성한댓글을 유저B가 수정할경우")
     void updateCommentThrowError() {
         //given
-        RequestComment requestComment = RequestComment.builder()
+        CommentRequest commentRequest = CommentRequest.builder()
                 .content("write_user1")
                 .build();
         //when
         when(userRepository.findByLoginId(any())).thenReturn(Optional.ofNullable(user2));
         when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
         //then
-        assertThrows(IllegalStateException.class, () -> commentService.updateComment(userB, 1L, requestComment));
+        assertThrows(IllegalStateException.class, () -> commentService.updateComment(userB, 1L, commentRequest));
     }
 
     @Test
