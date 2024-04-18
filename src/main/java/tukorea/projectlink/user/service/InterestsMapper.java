@@ -2,6 +2,7 @@ package tukorea.projectlink.user.service;
 
 import org.springframework.stereotype.Component;
 import tukorea.projectlink.user.domain.Interests;
+import tukorea.projectlink.user.domain.InterestsType;
 import tukorea.projectlink.user.dto.InterestsRequest;
 
 import java.util.List;
@@ -13,6 +14,13 @@ public class InterestsMapper {
                 .interests()
                 .stream()
                 .map(Interests::new)
+                .toList();
+    }
+
+    public List<InterestsType> toInterestsType(List<Interests> interests) {
+        return interests
+                .stream()
+                .map(Interests::getInterestsType)
                 .toList();
     }
 }

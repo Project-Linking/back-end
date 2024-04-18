@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tukorea.projectlink.user.domain.Interests;
+import tukorea.projectlink.user.domain.InterestsType;
 import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.dto.InterestsRequest;
 import tukorea.projectlink.user.dto.UserSignUpRequest;
@@ -37,36 +38,34 @@ public class UserService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
         List<Interests> oldInterests = user.getInterests();
-        List<Interests> newInterests = interestsMapper.mapFrom(interestsRequest);
+        List<InterestsType> newInterests = interestsRequest.interests();
 
         if (oldInterests.isEmpty()) {
-            saveNewInterests(interestsRequest, user);
+            saveNewInterests(newInterests, user);
         } else {
-            updateNewInterests(oldInterests, newInterests);
-            removeOldInterests(oldInterests, newInterests);
+            updateInterests(oldInterests, newInterests);
         }
     }
 
-    private void removeOldInterests(List<Interests> oldInterests, List<Interests> newInterests) {
+    private void updateInterests(List<Interests> oldInterests, List<InterestsType> newInterests) {
         oldInterests.removeAll(
-                oldInterests.stream()
-                        .filter(interests -> !newInterests.contains(interests))
+                oldInterests
+                        .stream()
+                        .filter(oldType -> !newInterests.contains(oldType.getInterestsType()))
                         .toList()
         );
-    }
-
-    private void updateNewInterests(List<Interests> oldInterests, List<Interests> newInterests) {
         oldInterests.addAll(
                 newInterests
                         .stream()
-                        .filter(newType -> !oldInterests.contains(newType))
+                        .filter(newType -> !interestsMapper.toInterestsType(oldInterests).contains(newType))
+                        .map(Interests::new)
                         .toList()
         );
     }
 
-    private void saveNewInterests(InterestsRequest interestsRequest, User user) {
+    private void saveNewInterests(List<InterestsType> newInterests, User user) {
         user.getInterests().addAll(
-                interestsRequest.interests()
+                newInterests
                         .stream()
                         .map(Interests::new)
                         .toList()
