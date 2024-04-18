@@ -32,7 +32,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // TODO : 운영환경에서 제외
         response.getWriter().write("AT: " + accessToken + "\n");
         response.getWriter().write("RT: " + refreshToken);
-        //
         user.updateRefreshToken(refreshToken);
         userRepository.saveAndFlush(user);
         jwtService.setJwtTokenToHeader(response, accessToken, refreshToken);

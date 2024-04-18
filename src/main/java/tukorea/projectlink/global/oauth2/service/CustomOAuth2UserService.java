@@ -1,5 +1,6 @@
 package tukorea.projectlink.global.oauth2.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
+@Getter
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private static final String NAVER = "naver";
     private static final String KAKAO = "kakao";
@@ -71,9 +73,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User saveUser(OAuthAttributes attributes, SocialType socialType) {
         User createdUser = attributes.toEntity(socialType, attributes.getOauth2UserInfo());
         return userRepository.save(createdUser);
-    }
-
-    public OAuth2UserInfo getoAuth2UserInfo() {
-        return oAuth2UserInfo;
     }
 }

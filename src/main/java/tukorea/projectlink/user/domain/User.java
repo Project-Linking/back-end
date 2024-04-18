@@ -8,10 +8,16 @@ import lombok.NoArgsConstructor;
 import tukorea.projectlink.user.Role;
 import tukorea.projectlink.user.SocialType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    private final List<Interests> interests = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

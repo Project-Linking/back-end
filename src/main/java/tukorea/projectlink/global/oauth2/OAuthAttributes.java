@@ -56,7 +56,7 @@ public class OAuthAttributes {
                 .socialType(socialType)
                 .socialId(oauth2UserInfo.getId())
                 .nickname(oauth2UserInfo.getNickname())
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .build();
     }
 }
