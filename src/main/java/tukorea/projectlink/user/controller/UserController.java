@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/private/interests")
     public CommonResponse<?> saveInterests(@AuthenticationPrincipal UserDetails userDetails, @RequestBody InterestsRequest interestsRequest) {
-        userService.saveInterests(interestsRequest, userDetails);
+        userService.saveInterests(interestsRequest, userDetails.getUsername());
         return CommonResponse.successWithEmptyData();
     }
 }
