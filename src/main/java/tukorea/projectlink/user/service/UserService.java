@@ -1,7 +1,6 @@
 package tukorea.projectlink.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tukorea.projectlink.user.domain.Interests;
@@ -33,43 +32,22 @@ public class UserService {
     }
 
     @Transactional
-    public void saveInterests(InterestsRequest interestsRequest, UserDetails userdetails) {
-        User user = userRepository.findByLoginId(userdetails.getUsername())
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+    public void saveInterests(InterestsRequest interestsRequest, String userLoginId) {
+        User user = getUser(userLoginId);
 
-        List<Interests> oldInterests = user.getInterests();
         List<InterestsType> newInterests = interestsRequest.interests();
+        List<Interests> oldInterests = user.getInterests();
 
         if (oldInterests.isEmpty()) {
-            saveNewInterests(newInterests, user);
+            oldInterests.addAll(interestsMapper.mapFrom(newInterests));
         } else {
-            updateInterests(oldInterests, newInterests);
+            user.updateInterests(newInterests);
         }
     }
 
-    private void updateInterests(List<Interests> oldInterests, List<InterestsType> newInterests) {
-        oldInterests.removeAll(
-                oldInterests
-                        .stream()
-                        .filter(oldType -> !newInterests.contains(oldType.getInterestsType()))
-                        .toList()
-        );
-        oldInterests.addAll(
-                newInterests
-                        .stream()
-                        .filter(newType -> !interestsMapper.toInterestsType(oldInterests).contains(newType))
-                        .map(Interests::new)
-                        .toList()
-        );
-    }
-
-    private void saveNewInterests(List<InterestsType> newInterests, User user) {
-        user.getInterests().addAll(
-                newInterests
-                        .stream()
-                        .map(Interests::new)
-                        .toList()
-        );
+    public User getUser(String userLoginId) {
+        return userRepository.findByLoginId(userLoginId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
     }
 
     private void validateInputField(UserSignUpRequest userSignUpDto) throws UserException {

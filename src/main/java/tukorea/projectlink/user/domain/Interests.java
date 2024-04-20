@@ -19,4 +19,6 @@ public class Interests {
     public Interests(InterestsType interestsType) {
         this.interestsType = interestsType;
     }
+
+
 }

@@ -10,6 +10,7 @@ import tukorea.projectlink.user.SocialType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ import java.util.List;
 public class User {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
-    private final List<Interests> interests = new ArrayList<>();
+    private List<Interests> interests = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -33,7 +34,7 @@ public class User {
     private String refreshToken;
 
     @Builder
-    public User(String loginId, String password, String nickname, Role role, SocialType socialType, String socialId, String refreshToken) {
+    public User(String loginId, String password, String nickname, Role role, SocialType socialType, String socialId, String refreshToken, List<Interests> interests) {
         this.loginId = loginId;
         this.password = password;
         this.nickname = nickname;
@@ -41,14 +42,43 @@ public class User {
         this.socialType = socialType;
         this.socialId = socialId;
         this.refreshToken = refreshToken;
+        this.interests = interests;
     }
 
-    // 유저 권한 설정 메소드
-    public void authorizeUser() {
-        this.role = Role.USER;
-    }
 
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
+    }
+
+    public void updateInterests(List<InterestsType> newTypes) {
+        this.interests.removeAll(removeInterests(newTypes));
+        this.interests.addAll(addInterests(newTypes));
+    }
+
+    private List<Interests> addInterests(List<InterestsType> newTypes) {
+        return newTypes
+                .stream()
+                .filter(isDifferentWithNewTypes())
+                .map(Interests::new)
+                .toList();
+    }
+
+    private List<Interests> removeInterests(List<InterestsType> newTypes) {
+        return this.interests
+                .stream()
+                .filter(isDifferentWithOldTypes(newTypes))
+                .toList();
+    }
+
+    private Predicate<InterestsType> isDifferentWithNewTypes() {
+        return newType -> !this.interests
+                .stream()
+                .map(Interests::getInterestsType)
+                .toList()
+                .contains(newType);
+    }
+
+    private Predicate<Interests> isDifferentWithOldTypes(List<InterestsType> newTypes) {
+        return oldType -> !newTypes.contains(oldType.getInterestsType());
     }
 }
