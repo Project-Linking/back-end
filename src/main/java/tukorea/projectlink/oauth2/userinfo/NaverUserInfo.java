@@ -7,7 +7,7 @@ public class NaverUserInfo implements Oauth2UserInfo {
     private Response response;
 
     @Override
-    public String getSocialLoginId() {
+    public String getSocialId() {
         return response.socialLoginId;
     }
 

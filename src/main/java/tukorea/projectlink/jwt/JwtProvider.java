@@ -1,28 +1,27 @@
 package tukorea.projectlink.jwt;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import tukorea.projectlink.global.configproperties.JwtProperties;
+import tukorea.projectlink.jwt.exception.JwtCustomException;
+import tukorea.projectlink.jwt.exception.JwtErrorCode;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@ConfigurationProperties(prefix = "jwt")
-@Getter
+@Component
 public class JwtProvider {
+    private final JwtProperties props;
     private final SecretKey secretKey;
-    private final Long accessExpiration;
-    private final Long refreshExpiration;
 
-    public JwtProvider(String secretKey, Long accessExpiration, Long refreshExpiration) {
-        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        this.accessExpiration = accessExpiration;
-        this.refreshExpiration = refreshExpiration;
+    public JwtProvider(JwtProperties props) {
+        this.props = props;
+        this.secretKey = Keys.hmacShaKeyFor(props.secretKey().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createToken(String subject, Long duration) {
+    public String create(String subject, Long duration) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + duration);
         return Jwts.builder()
@@ -31,5 +30,38 @@ public class JwtProvider {
                 .expiration(expirationDate)
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public void checkAccessToken(String accessToken) {
+        try {
+            parse(accessToken);
+        } catch (ExpiredJwtException e) {
+            throw new JwtCustomException(JwtErrorCode.EXPIRED_ACCESS_TOKEN);
+        } catch (JwtException e) {
+            throw new JwtCustomException(JwtErrorCode.INVALID_JWT);
+        }
+    }
+
+    public void checkRefreshToken(String refreshToken) {
+        try {
+            parse(refreshToken);
+        } catch (ExpiredJwtException e) {
+            throw new JwtCustomException(JwtErrorCode.EXPIRED_REFRESH_TOKEN);
+        } catch (JwtException e) {
+            throw new JwtCustomException(JwtErrorCode.EXPIRED_ACCESS_TOKEN);
+        }
+    }
+
+    public String getSubject(String token) {
+        return parse(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    private Jws<Claims> parse(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token);
     }
 }

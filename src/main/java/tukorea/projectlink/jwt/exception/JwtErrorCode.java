@@ -5,10 +5,10 @@ import tukorea.projectlink.global.common.CommonError;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum JwtErrorCode implements CommonError {
-    SIGNATURE_VERIFICATION_FAILED("JWT-001", "JWT Signature 불일치"),
-    DECODE_FAILED("JWT-002", "JWT 디코딩 실패"),
-    MISMATCH_REFRESHTOKEN("JWT-003", "RefreshToken 불일치, 비정상적인 접근"),
-    MISMATCH_ACCESSTOKEN("JWT-004", "AccessToken 불일치");
+    INVALID_JWT("JWT-001", "신뢰할 수 없는 JWT입니다."),
+    EXPIRED_ACCESS_TOKEN("JWT-002", "만료된 액세스 토큰입니다."),
+    EXPIRED_REFRESH_TOKEN("JWT-003", "만료된 리프레쉬 토큰입니다."),
+    INVALID_HEADER_TYPE("JWT-004", "부적절한 헤더 타입입니다.");
     private final String code;
     private final String description;
 

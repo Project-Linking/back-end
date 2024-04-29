@@ -9,7 +9,7 @@ public class KakaoUserInfo implements Oauth2UserInfo {
     private KakaoAccount kakaoAccount;
 
     @Override
-    public String getSocialLoginId() {
+    public String getSocialId() {
         return socialLoginId;
     }
 
