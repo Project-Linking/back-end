@@ -40,7 +40,7 @@ public class UserService {
     }
 
     @Transactional
-    public User findOrSaveUser(Oauth2UserInfo oauth2UserInfo) {
+    public User findOrSaveOauthUser(Oauth2UserInfo oauth2UserInfo) {
         return userRepository
                 .findBySocialId(oauth2UserInfo.getSocialId())
                 .orElseGet(() -> saveUser(oauth2UserInfo));

@@ -31,7 +31,10 @@ public class KakaoOauth2Provider implements Oauth2Provider {
         String accessToken = getOauth2Response(code).getAccessToken();
         System.out.println("accessToken = " + accessToken);
         return restClient.get()
-                .uri(uriBuilder -> uriBuilder.queryParam(SECURE_RESOURCE, true).build())
+                .uri(uriBuilder -> uriBuilder
+                        .path(props.userInfoUri())
+                        .queryParam(SECURE_RESOURCE, true)
+                        .build())
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .headers(headers -> headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .retrieve()

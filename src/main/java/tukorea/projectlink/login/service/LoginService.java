@@ -30,7 +30,7 @@ public class LoginService {
     public UserToken socialLogin(String providerName, SocialLoginRequest loginRequest) {
         Oauth2Provider provider = oauth2Providers.findByProviderName(providerName);
         Oauth2UserInfo oauth2UserInfo = provider.getUserInfo(loginRequest.authorizationCode());
-        User user = userService.findOrSaveUser(oauth2UserInfo);
+        User user = userService.findOrSaveOauthUser(oauth2UserInfo);
         return issueUserToken(user);
     }
 
