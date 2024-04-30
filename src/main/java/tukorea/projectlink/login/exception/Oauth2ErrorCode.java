@@ -1,22 +1,16 @@
-package tukorea.projectlink.user.exception;
+package tukorea.projectlink.login.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import tukorea.projectlink.global.common.CommonError;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum UserErrorCode implements CommonError {
-
-    ARGUMENT_NOT_VALID("USER-001", "MAL_INPUT"),
-    DUPLICATED_DATA_REQUEST("USER-002", "DUPLICATED_DATA"),
-    USER_NOT_FOUND("USER-003", "회원을 찾을 수 없습니다."),
-    INTERESTS_REQUEST_NOT_VALID("USER-004", "관심 분야는 최대 3개까지 등록이 가능합니다."),
-    INVALID_REQUEST("USER-005", "재요청 필요"),
-    INVALID_PASSWORD("USER-006", "잘못된 비밀번호 입니다.");
-
+public enum Oauth2ErrorCode implements CommonError {
+    CAN_NOT_FIND_OAUTH_PROVIDER("OAUTH-001", "Oauth Provider를 찾을 수 없습니다."),
+    INVALID_OAUTH_AUTHORIZATION_CODE("OAUTH-002", "잘못된 인가코드 입니다.");
     private final String code;
     private String description;
 
-    UserErrorCode(String code, String description) {
+    Oauth2ErrorCode(String code, String description) {
         this.code = code;
         this.description = description;
     }

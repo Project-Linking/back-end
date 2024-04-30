@@ -3,6 +3,8 @@ package tukorea.projectlink.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tukorea.projectlink.auth.Authentication;
+import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 import tukorea.projectlink.user.domain.Interests;
 import tukorea.projectlink.user.domain.InterestsType;
 import tukorea.projectlink.user.domain.User;
@@ -32,8 +34,21 @@ public class UserService {
     }
 
     @Transactional
-    public void saveInterests(InterestsRequest interestsRequest, String userLoginId) {
-        User user = getUser(userLoginId);
+    public User saveUser(Oauth2UserInfo userInfo) {
+        User user = userMapper.mapFrom(userInfo);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User findOrSaveOauthUser(Oauth2UserInfo oauth2UserInfo) {
+        return userRepository
+                .findBySocialId(oauth2UserInfo.getSocialId())
+                .orElseGet(() -> saveUser(oauth2UserInfo));
+    }
+
+    @Transactional
+    public void saveInterests(InterestsRequest interestsRequest, Authentication authentication) {
+        User user = getUser(authentication.userId());
 
         List<InterestsType> newInterests = interestsRequest.interests();
         List<Interests> oldInterests = user.getInterests();
@@ -45,8 +60,13 @@ public class UserService {
         }
     }
 
-    public User getUser(String userLoginId) {
-        return userRepository.findByLoginId(userLoginId)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+    }
+
+    public User getUser(String loginId) {
+        return userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
     }
 

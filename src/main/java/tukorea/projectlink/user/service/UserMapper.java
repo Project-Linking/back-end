@@ -3,6 +3,7 @@ package tukorea.projectlink.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 import tukorea.projectlink.user.Role;
 import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.dto.UserSignUpRequest;
@@ -21,6 +22,14 @@ public class UserMapper {
                 .password(encodedPassword)
                 .nickname(dto.nickname())
                 .role(Role.USER)
+                .build();
+    }
+
+    public User mapFrom(Oauth2UserInfo userInfo) {
+        return User.builder()
+                .socialId(userInfo.getSocialId())
+                .nickname(userInfo.getNickname())
+                .imageUri(userInfo.getImageUrl())
                 .build();
     }
 

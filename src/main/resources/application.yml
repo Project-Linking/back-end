@@ -3,4 +3,6 @@ server:
 
 spring:
   profiles:
-    default: dev
+    active: develop
+    group:
+      develop: dev,oauth2,jwt

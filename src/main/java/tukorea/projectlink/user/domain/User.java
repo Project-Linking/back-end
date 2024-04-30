@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import tukorea.projectlink.user.Role;
-import tukorea.projectlink.user.SocialType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,23 +25,22 @@ public class User {
     private String loginId;
     private String password;
     private String nickname;
+    private String imageUri;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType;
     private String socialId;
     private String refreshToken;
 
     @Builder
-    public User(String loginId, String password, String nickname, Role role, SocialType socialType, String socialId, String refreshToken, List<Interests> interests) {
+    public User(String loginId, String password, String nickname, Role role, String socialId, String refreshToken, List<Interests> interests, String imageUri) {
         this.loginId = loginId;
         this.password = password;
         this.nickname = nickname;
         this.role = role;
-        this.socialType = socialType;
         this.socialId = socialId;
         this.refreshToken = refreshToken;
         this.interests = interests;
+        this.imageUri = imageUri;
     }
 
 

@@ -3,9 +3,9 @@ package tukorea.projectlink.comment.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import tukorea.projectlink.auth.Auth;
+import tukorea.projectlink.auth.Authentication;
 import tukorea.projectlink.comment.dto.RequestComment;
 import tukorea.projectlink.comment.dto.ResponseComment;
 import tukorea.projectlink.comment.service.CommentService;
@@ -20,8 +20,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/private/comment")
-    public CommonResponse<ResponseComment> createComment(@AuthenticationPrincipal UserDetails userDetails, @RequestBody RequestComment requestComment) {
-        return CommonResponse.successWithData(commentService.createComment(userDetails, requestComment));
+    public CommonResponse<ResponseComment> createComment(@Auth Authentication authentication, @RequestBody RequestComment requestComment) {
+        return CommonResponse.successWithData(commentService.createComment(authentication, requestComment));
     }
 
     @GetMapping("/public/comment/{board_id}")
@@ -30,13 +30,13 @@ public class CommentController {
     }
 
     @PatchMapping("/private/comment/{comment_id}")
-    public CommonResponse<ResponseComment> updateComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "comment_id") Long commentId, @RequestBody RequestComment requestComment) {
-        return CommonResponse.successWithData(commentService.updateComment(userDetails, commentId, requestComment));
+    public CommonResponse<ResponseComment> updateComment(@Auth Authentication authentication, @PathVariable(name = "comment_id") Long commentId, @RequestBody RequestComment requestComment) {
+        return CommonResponse.successWithData(commentService.updateComment(authentication, commentId, requestComment));
     }
 
     @DeleteMapping("/private/comment/{comment_id}")
-    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "comment_id") Long commentId) {
-        commentService.deleteComment(userDetails, commentId);
+    public ResponseEntity<?> deleteComment(@Auth Authentication authentication, @PathVariable(name = "comment_id") Long commentId) {
+        commentService.deleteComment(authentication, commentId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
