@@ -7,11 +7,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import tukorea.projectlink.global.configproperties.KakaoOauth2Properties;
+import org.springframework.web.util.UriComponentsBuilder;
 import tukorea.projectlink.login.exception.Oauth2ErrorCode;
 import tukorea.projectlink.login.exception.Oauth2Exception;
+import tukorea.projectlink.oauth2.configproperties.KakaoOauth2Properties;
 import tukorea.projectlink.oauth2.userinfo.KakaoUserInfo;
 import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
+
+import java.net.URI;
 
 @RequiredArgsConstructor
 @Component
@@ -29,16 +32,20 @@ public class KakaoOauth2Provider implements Oauth2Provider {
     @Override
     public Oauth2UserInfo getUserInfo(String code) {
         String accessToken = getOauth2Response(code).getAccessToken();
-        System.out.println("accessToken = " + accessToken);
         return restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(props.userInfoUri())
-                        .queryParam(SECURE_RESOURCE, true)
-                        .build())
+                .uri(createURI())
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .headers(headers -> headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .retrieve()
                 .body(KakaoUserInfo.class);
+    }
+
+    private URI createURI() {
+        return UriComponentsBuilder
+                .fromUri(URI.create(props.userInfoUri()))
+                .queryParam(SECURE_RESOURCE, true)
+                .build()
+                .toUri();
     }
 
 
