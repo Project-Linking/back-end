@@ -1,43 +1,45 @@
 package tukorea.projectlink.board.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.dto.RequestBoard;
 import tukorea.projectlink.board.dto.ResponseBoard;
 import tukorea.projectlink.board.service.BoardService;
+import tukorea.projectlink.global.common.CommonResponse;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
+@RequestMapping("/api/board")
 public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseBoard createPost(@RequestBody RequestBoard requestBoard){
-        return boardService.createBoard(requestBoard);
+    public CommonResponse<ResponseBoard> createPost(@Valid @RequestBody RequestBoard requestBoard){
+        return CommonResponse.successWithData(boardService.createBoard(requestBoard));
     }
 
     @GetMapping
-    public List<Board> findAllBoard(){
-        return boardService.findAllBoard();
+    public CommonResponse<List<ResponseBoard>> findAllBoard(){
+        return CommonResponse.successWithData(boardService.findAllBoard());
     }
 
     @GetMapping("/{id}")
-    public ResponseBoard findBoardById(@PathVariable Long id){
-        return boardService.findBoardById(id);
+    public CommonResponse<ResponseBoard> findBoardById(@PathVariable Long id){
+        return CommonResponse.successWithData(boardService.findBoardById(id));
     }
 
     @PutMapping("/{id}")
-    public Board updateBoard(@PathVariable Long id, @RequestBody RequestBoard requestBoard){
-        return boardService.updateBoard(id, requestBoard);
+    public CommonResponse<ResponseBoard> updateBoard(@PathVariable Long id, @Valid @RequestBody RequestBoard requestBoard){
+        return CommonResponse.successWithData(boardService.updateBoard(id, requestBoard));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBoard(@PathVariable Long id){
+    public CommonResponse<?> deleteBoard(@PathVariable Long id){
         boardService.deleteBoard(id);
+        return CommonResponse.successWithEmptyData();
     }
 
 
