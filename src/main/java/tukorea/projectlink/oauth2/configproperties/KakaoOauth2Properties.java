@@ -1,4 +1,4 @@
-package tukorea.projectlink.global.configproperties;
+package tukorea.projectlink.oauth2.configproperties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

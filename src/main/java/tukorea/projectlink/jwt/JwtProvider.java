@@ -3,7 +3,7 @@ package tukorea.projectlink.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import tukorea.projectlink.global.configproperties.JwtProperties;
+import tukorea.projectlink.jwt.configproperties.JwtProperties;
 import tukorea.projectlink.jwt.exception.JwtCustomException;
 import tukorea.projectlink.jwt.exception.JwtErrorCode;
 
