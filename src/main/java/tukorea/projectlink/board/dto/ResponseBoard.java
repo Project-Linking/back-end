@@ -7,20 +7,19 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Builder
-public class ResponseBoard {
-    private Long id;
+public record ResponseBoard (
+    Long id,
 
-    @NotBlank
-    @Size(min = 1, max = 30)
-    private String title;
+    @NotBlank(message = "제목은 반드시 입력해야 합니다.")
+    @Size(max = 30, message = "제목은 최대 30자까지 가능합니다.")
+    String title,
 
-    @Size(max = 3000)
-    private String content;
-    private LocalDateTime deadline;
+    @Size(max = 3000, message = "글 내용은 최대 3000자까지 가능합니다.")
+    String content,
+    LocalDateTime deadline,
 
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    LocalDateTime createdAt,
+    LocalDateTime modifiedAt
+) {}
 
-}
