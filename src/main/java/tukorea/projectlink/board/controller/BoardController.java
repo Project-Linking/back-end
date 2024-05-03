@@ -3,6 +3,8 @@ package tukorea.projectlink.board.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import tukorea.projectlink.auth.Auth;
+import tukorea.projectlink.auth.Authentication;
 import tukorea.projectlink.board.dto.RequestBoard;
 import tukorea.projectlink.board.dto.ResponseBoard;
 import tukorea.projectlink.board.service.BoardService;

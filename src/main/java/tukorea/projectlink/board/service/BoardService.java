@@ -1,7 +1,9 @@
 package tukorea.projectlink.board.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tukorea.projectlink.auth.Authentication;
 import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.dto.RequestBoard;
 import tukorea.projectlink.board.dto.ResponseBoard;
@@ -13,19 +15,15 @@ import java.util.List;
 import static tukorea.projectlink.board.exception.BoardErrorCode.BOARD_ID_INVALID;
 
 @Service
+@RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    @Autowired
-    public BoardService(BoardRepository boardRepository) {
-        this.boardRepository = boardRepository;
-    }
-
-    public ResponseBoard createBoard(RequestBoard requestBoard) {
+    public ResponseBoard createBoard(RequestBoard requestBoard){
         Board board = Board.builder()
-                .title(requestBoard.getTitle())
-                .content(requestBoard.getContent())
-                .deadline(requestBoard.getDeadline())
+                .title(requestBoard.title())
+                .content(requestBoard.content())
+                .deadline(requestBoard.deadline())
                 .build();
 
         Board save = boardRepository.save(board);
@@ -64,7 +62,7 @@ public class BoardService {
     public ResponseBoard updateBoard(Long id, RequestBoard requestBoard) {
         Board board = boardRepository.findById(id).orElseThrow(() ->  new BoardException(BOARD_ID_INVALID));
 
-        board.update(requestBoard.getTitle(), requestBoard.getContent(), requestBoard.getDeadline());
+        board.update(requestBoard.title(), requestBoard.content(), requestBoard.deadline());
 
         Board save = boardRepository.save(board);
 

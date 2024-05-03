@@ -2,18 +2,17 @@ package tukorea.projectlink.board.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
-public class RequestBoard {
-    @NotBlank
-    @Size(min = 1, max = 30)
-    private String title;
+public record RequestBoard(
+        @NotBlank(message = "제목은 반드시 입력해야 합니다.")
+        @Size(max = 30, message = "제목은 최대 30자까지 가능합니다.")
+        String title,
 
-    @Size(max = 3000)
-    private String content;
+        @Size(max = 3000, message = "글 내용은 최대 3000자까지 가능합니다.")
 
-    private LocalDateTime deadline;
-}
+        String content,
+
+        LocalDateTime deadline
+){}
