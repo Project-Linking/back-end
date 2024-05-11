@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import tukorea.projectlink.login.dto.SocialLoginRequest;
 import tukorea.projectlink.oauth2.configproperties.NaverOauth2Properties;
 import tukorea.projectlink.oauth2.userinfo.NaverUserInfo;
 import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -27,8 +29,8 @@ public class NaverOauth2Provider implements Oauth2Provider {
     }
 
     @Override
-    public Oauth2UserInfo getUserInfo(String code) {
-        NaverTokenResponse response = getAccessToken(code);
+    public Oauth2UserInfo getUserInfo(SocialLoginRequest loginRequest) {
+        NaverTokenResponse response = getAccessToken(loginRequest.authorizationCode());
         return client.get()
                 .uri(props.userInfoUri())
                 .headers(header -> header.setBearerAuth(response.accessToken))
@@ -36,22 +38,27 @@ public class NaverOauth2Provider implements Oauth2Provider {
                 .body(NaverUserInfo.class);
     }
 
-    private NaverTokenResponse getAccessToken(String code) {
+    private NaverTokenResponse getAccessToken(String authenticationCode) {
         return client.get()
-                .uri(createURI(code))
+                .uri(createURI(authenticationCode))
                 .retrieve()
                 .body(NaverTokenResponse.class);
     }
 
-    private URI createURI(String code) {
+    private URI createURI(String authenticationCode) {
+        String stateCode = createStateCode();
         return UriComponentsBuilder.fromUri(URI.create(props.tokenUri()))
                 .queryParam("grant_type", GRANT_TYPE)
                 .queryParam("client_id", props.clientId())
                 .queryParam("client_secret", props.clientSecret())
-                .queryParam("code", code)
-                .queryParam("state", "hLiDdL2uhPtsftcU")
+                .queryParam("code", authenticationCode)
+                .queryParam("state", stateCode)
                 .build()
                 .toUri();
+    }
+
+    private String createStateCode() {
+        return UUID.randomUUID().toString();
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

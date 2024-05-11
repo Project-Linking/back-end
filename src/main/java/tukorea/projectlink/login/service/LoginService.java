@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tukorea.projectlink.jwt.JwtService;
 import tukorea.projectlink.jwt.UserToken;
 import tukorea.projectlink.login.dto.LoginRequest;
+import tukorea.projectlink.login.dto.Oauth2LoginResponse;
 import tukorea.projectlink.login.dto.SocialLoginRequest;
 import tukorea.projectlink.oauth2.Oauth2Providers;
 import tukorea.projectlink.oauth2.provider.Oauth2Provider;
@@ -21,17 +22,19 @@ import tukorea.projectlink.user.service.UserService;
 @RequiredArgsConstructor
 public class LoginService {
 
+    private static final String UTF_8 = "UTF-8";
     private final Oauth2Providers oauth2Providers;
     private final JwtService jwtService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserToken socialLogin(String providerName, SocialLoginRequest loginRequest) {
+    public Oauth2LoginResponse socialLogin(String providerName, SocialLoginRequest loginRequest) {
         Oauth2Provider provider = oauth2Providers.findByProviderName(providerName);
-        Oauth2UserInfo oauth2UserInfo = provider.getUserInfo(loginRequest.authorizationCode());
+        Oauth2UserInfo oauth2UserInfo = provider.getUserInfo(loginRequest);
         User user = userService.findOrSaveOauthUser(oauth2UserInfo);
-        return issueUserToken(user);
+        UserToken userToken = issueUserToken(user);
+        return new Oauth2LoginResponse(userToken, oauth2UserInfo.getNickname(), oauth2UserInfo.getImageUrl());
     }
 
     @Transactional

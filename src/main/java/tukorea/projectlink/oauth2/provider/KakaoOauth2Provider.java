@@ -12,6 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import tukorea.projectlink.login.dto.SocialLoginRequest;
 import tukorea.projectlink.login.exception.Oauth2ErrorCode;
 import tukorea.projectlink.login.exception.Oauth2Exception;
 import tukorea.projectlink.oauth2.configproperties.KakaoOauth2Properties;
@@ -34,11 +35,11 @@ public class KakaoOauth2Provider implements Oauth2Provider {
     }
 
     @Override
-    public Oauth2UserInfo getUserInfo(String code) {
-        String accessToken = getAccessToken(code).getAccessToken();
+    public Oauth2UserInfo getUserInfo(SocialLoginRequest loginRequest) {
+        KakaoTokenResponse response = getAccessToken(loginRequest.authorizationCode());
         return restClient.get()
                 .uri(createURI())
-                .headers(headers -> headers.setBearerAuth(accessToken))
+                .headers(headers -> headers.setBearerAuth(response.accessToken))
                 .headers(headers -> headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .retrieve()
                 .body(KakaoUserInfo.class);
