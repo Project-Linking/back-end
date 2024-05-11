@@ -3,7 +3,6 @@ package tukorea.projectlink.board.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tukorea.projectlink.auth.Authentication;
 import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.dto.BoardMainResponse;
 import tukorea.projectlink.board.dto.BoardRequest;
@@ -49,11 +48,16 @@ public class BoardService {
         return boardDetailsResponse;
     }
 
+<<<<<<< Updated upstream
     public List<BoardMainResponse> findAllBoard() {
         List<Board> boards = boardRepository.findAllByOrderByModifiedAtDesc();
         return boards.stream()
                 .map(BoardMainResponse::toResponse)
                 .collect(Collectors.toList());
+=======
+    public List<Board> findAllBoard() {
+        return boardRepository.findAllByOrderByModifiedAtDesc();
+>>>>>>> Stashed changes
     }
 
     public BoardDetailsResponse findBoardById(Long id) {

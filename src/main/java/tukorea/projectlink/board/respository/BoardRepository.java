@@ -1,6 +1,7 @@
 package tukorea.projectlink.board.respository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.dto.BoardDetailsResponse;
 

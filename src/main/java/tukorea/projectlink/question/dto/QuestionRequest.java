@@ -1,2 +1,9 @@
-package tukorea.projectlink.question.dto;public class QuestionRequest {
+package tukorea.projectlink.question.dto;
+
+import tukorea.projectlink.question.domain.QuestionType;
+public record QuestionRequest(
+        Long boardId,
+        String questionText,
+        QuestionType type
+) {
 }

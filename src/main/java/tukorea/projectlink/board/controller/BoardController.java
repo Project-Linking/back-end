@@ -5,9 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tukorea.projectlink.auth.Auth;
 import tukorea.projectlink.auth.Authentication;
+<<<<<<< Updated upstream
 import tukorea.projectlink.board.dto.BoardMainResponse;
 import tukorea.projectlink.board.dto.BoardRequest;
 import tukorea.projectlink.board.dto.BoardDetailsResponse;
+=======
+import tukorea.projectlink.board.domain.Board;
+import tukorea.projectlink.board.dto.RequestBoard;
+import tukorea.projectlink.board.dto.ResponseBoard;
+>>>>>>> Stashed changes
 import tukorea.projectlink.board.service.BoardService;
 import tukorea.projectlink.global.common.CommonResponse;
 
@@ -25,7 +31,11 @@ public class BoardController {
     }
 
     @GetMapping
+<<<<<<< Updated upstream
     public CommonResponse<List<BoardMainResponse>> findAllBoard(){
+=======
+    public CommonResponse<List<Board>> findAllBoard(){
+>>>>>>> Stashed changes
         return CommonResponse.successWithData(boardService.findAllBoard());
     }
 

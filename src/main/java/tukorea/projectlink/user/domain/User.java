@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.user.Role;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
     private String loginId;
     private String password;
     private String nickname;

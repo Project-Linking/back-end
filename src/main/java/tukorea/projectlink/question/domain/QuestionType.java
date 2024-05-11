@@ -1,2 +1,5 @@
-package tukorea.projectlink.question.domain;public enum QuestionType {
+package tukorea.projectlink.question.domain;
+
+public enum QuestionType {
+    TEXT,RADIO
 }
