@@ -13,9 +13,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import tukorea.projectlink.login.dto.SocialLoginRequest;
-import tukorea.projectlink.login.exception.Oauth2ErrorCode;
-import tukorea.projectlink.login.exception.Oauth2Exception;
-import tukorea.projectlink.oauth2.configproperties.KakaoOauth2Properties;
+import tukorea.projectlink.global.errorcode.Oauth2ErrorCode;
+import tukorea.projectlink.global.exception.Oauth2Exception;
+import tukorea.projectlink.global.configproerties.KakaoOauth2Properties;
 import tukorea.projectlink.oauth2.userinfo.KakaoUserInfo;
 import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 

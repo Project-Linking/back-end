@@ -2,8 +2,8 @@ package tukorea.projectlink.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import tukorea.projectlink.login.exception.Oauth2ErrorCode;
-import tukorea.projectlink.login.exception.Oauth2Exception;
+import tukorea.projectlink.global.errorcode.Oauth2ErrorCode;
+import tukorea.projectlink.global.exception.Oauth2Exception;
 import tukorea.projectlink.oauth2.provider.Oauth2Provider;
 
 import java.util.List;

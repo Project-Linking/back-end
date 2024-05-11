@@ -1,6 +1,7 @@
-package tukorea.projectlink.jwt.exception;
+package tukorea.projectlink.global.exception;
 
 import lombok.Getter;
+import tukorea.projectlink.global.errorcode.JwtErrorCode;
 
 @Getter
 /**

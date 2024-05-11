@@ -13,8 +13,8 @@ import tukorea.projectlink.oauth2.Oauth2Providers;
 import tukorea.projectlink.oauth2.provider.Oauth2Provider;
 import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 import tukorea.projectlink.user.domain.User;
-import tukorea.projectlink.user.exception.UserErrorCode;
-import tukorea.projectlink.user.exception.UserException;
+import tukorea.projectlink.global.errorcode.UserErrorCode;
+import tukorea.projectlink.global.exception.UserException;
 import tukorea.projectlink.user.service.UserService;
 
 @Service

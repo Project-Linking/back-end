@@ -8,10 +8,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import tukorea.projectlink.board.exception.BoardException;
-import tukorea.projectlink.jwt.exception.JwtCustomException;
-import tukorea.projectlink.login.exception.Oauth2Exception;
-import tukorea.projectlink.user.exception.UserException;
+import tukorea.projectlink.global.exception.BoardException;
+import tukorea.projectlink.global.exception.JwtCustomException;
+import tukorea.projectlink.global.exception.Oauth2Exception;
+import tukorea.projectlink.global.exception.UserException;
 
 @RestControllerAdvice
 @Slf4j

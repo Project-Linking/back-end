@@ -1,4 +1,4 @@
-package tukorea.projectlink.jwt.configproperties;
+package tukorea.projectlink.global.configproerties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

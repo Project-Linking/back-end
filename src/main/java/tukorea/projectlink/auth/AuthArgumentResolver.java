@@ -10,10 +10,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import tukorea.projectlink.jwt.JwtProvider;
-import tukorea.projectlink.jwt.exception.JwtCustomException;
-import tukorea.projectlink.jwt.exception.JwtErrorCode;
-import tukorea.projectlink.user.exception.UserErrorCode;
-import tukorea.projectlink.user.exception.UserException;
+import tukorea.projectlink.global.exception.JwtCustomException;
+import tukorea.projectlink.global.errorcode.JwtErrorCode;
+import tukorea.projectlink.global.errorcode.UserErrorCode;
+import tukorea.projectlink.global.exception.UserException;
 
 @RequiredArgsConstructor
 @Component

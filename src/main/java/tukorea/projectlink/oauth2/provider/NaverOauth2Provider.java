@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import tukorea.projectlink.login.dto.SocialLoginRequest;
-import tukorea.projectlink.oauth2.configproperties.NaverOauth2Properties;
+import tukorea.projectlink.global.configproerties.NaverOauth2Properties;
 import tukorea.projectlink.oauth2.userinfo.NaverUserInfo;
 import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 

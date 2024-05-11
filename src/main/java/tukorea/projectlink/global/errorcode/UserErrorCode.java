@@ -1,4 +1,4 @@
-package tukorea.projectlink.user.exception;
+package tukorea.projectlink.global.errorcode;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import tukorea.projectlink.global.common.CommonError;

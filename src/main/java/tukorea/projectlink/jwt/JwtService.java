@@ -2,7 +2,7 @@ package tukorea.projectlink.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tukorea.projectlink.jwt.configproperties.JwtProperties;
+import tukorea.projectlink.global.configproerties.JwtProperties;
 
 @Service
 @RequiredArgsConstructor

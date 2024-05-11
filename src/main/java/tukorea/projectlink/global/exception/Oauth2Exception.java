@@ -1,4 +1,4 @@
-package tukorea.projectlink.login.exception;
+package tukorea.projectlink.global.exception;
 
 import lombok.Getter;
 import tukorea.projectlink.global.common.CommonError;
