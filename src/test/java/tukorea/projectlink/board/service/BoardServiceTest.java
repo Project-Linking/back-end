@@ -61,6 +61,7 @@ class BoardServiceTest {
         System.out.println("=== N+1 문제 발생 시나리오 ===");
         List<Board> boards = boardRepository.findAllByOrderByModifiedAtDesc();
         for (Board board : boards) {
+            System.out.println("board_id=" + board.getId());
             System.out.println("댓글 수: " + board.getComments().size());
         }
     }

@@ -6,8 +6,8 @@ import tukorea.projectlink.global.common.CommonError;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum UserErrorCode implements CommonError {
 
-    ARGUMENT_NOT_VALID("USER-001", "MAL_INPUT"),
-    DUPLICATED_DATA_REQUEST("USER-002", "DUPLICATED_DATA"),
+    ARGUMENT_NOT_VALID("USER-001", "잘못된 입력형식 입니다."),
+    DUPLICATED_DATA_REQUEST("USER-002", "중복된 데이터 입니다."),
     USER_NOT_FOUND("USER-003", "회원을 찾을 수 없습니다."),
     INTERESTS_REQUEST_NOT_VALID("USER-004", "관심 분야는 최대 3개까지 등록이 가능합니다."),
     INVALID_REQUEST("USER-005", "재요청 필요"),
