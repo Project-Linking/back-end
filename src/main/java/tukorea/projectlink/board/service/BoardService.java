@@ -1,35 +1,44 @@
 package tukorea.projectlink.board.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tukorea.projectlink.auth.Authentication;
 import tukorea.projectlink.board.domain.Board;
-import tukorea.projectlink.board.dto.RequestBoard;
-import tukorea.projectlink.board.dto.ResponseBoard;
+import tukorea.projectlink.board.dto.BoardMainResponse;
+import tukorea.projectlink.board.dto.BoardRequest;
+import tukorea.projectlink.board.dto.BoardDetailsResponse;
 import tukorea.projectlink.board.exception.BoardException;
 import tukorea.projectlink.board.respository.BoardRepository;
+import tukorea.projectlink.comment.service.CommentService;
+import tukorea.projectlink.user.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static tukorea.projectlink.board.exception.BoardErrorCode.BOARD_ID_INVALID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final UserService userService;
+    private final CommentService commentService;
 
-    public ResponseBoard createBoard(RequestBoard requestBoard){
+    public BoardDetailsResponse createBoard(BoardRequest boardRequest, Authentication auth) {
         Board board = Board.builder()
-                .title(requestBoard.title())
-                .content(requestBoard.content())
-                .deadline(requestBoard.deadline())
+                .user(userService.getUser(auth.userId()))
+                .title(boardRequest.title())
+                .content(boardRequest.content())
+                .deadline(boardRequest.deadline())
                 .build();
 
         Board save = boardRepository.save(board);
 
-        ResponseBoard responseBoard = ResponseBoard.builder()
+        BoardDetailsResponse boardDetailsResponse = BoardDetailsResponse.builder()
                 .id(save.getId())
+                .userId(save.getUser().getId())
                 .title(save.getTitle())
                 .content(save.getContent())
                 .deadline(save.getDeadline())
@@ -37,37 +46,43 @@ public class BoardService {
                 .modifiedAt(save.getModifiedAt())
                 .build();
 
-        return responseBoard;
+        return boardDetailsResponse;
     }
 
-    public List<ResponseBoard> findAllBoard() {
-        return boardRepository.findAllByOrderByModifiedAtDesc();
+    public List<BoardMainResponse> findAllBoard() {
+        List<Board> boards = boardRepository.findAllByOrderByModifiedAtDesc();
+        return boards.stream()
+                .map(BoardMainResponse::toResponse)
+                .collect(Collectors.toList());
     }
 
-    public ResponseBoard findBoardById(Long id) {
+    public BoardDetailsResponse findBoardById(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new BoardException(BOARD_ID_INVALID));
 
-        ResponseBoard responseBoardById = ResponseBoard.builder()
+        BoardDetailsResponse boardDetailsResponseById = BoardDetailsResponse.builder()
                 .id(board.getId())
+                .userId(board.getUser().getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .deadline(board.getDeadline())
                 .createdAt(board.getCreatedAt())
                 .modifiedAt(board.getModifiedAt())
+                .comments(commentService.getAllCommentByPost(board.getId()))
                 .build();
 
-        return responseBoardById;
+        return boardDetailsResponseById;
     }
 
-    public ResponseBoard updateBoard(Long id, RequestBoard requestBoard) {
+    public BoardDetailsResponse updateBoard(Long id, BoardRequest boardRequest) {
         Board board = boardRepository.findById(id).orElseThrow(() ->  new BoardException(BOARD_ID_INVALID));
 
-        board.update(requestBoard.title(), requestBoard.content(), requestBoard.deadline());
+        board.update(boardRequest.title(), boardRequest.content(), boardRequest.deadline());
 
         Board save = boardRepository.save(board);
 
-        ResponseBoard responseBoardByIdUpdate = ResponseBoard.builder()
+        BoardDetailsResponse boardDetailsResponseByIdUpdate = BoardDetailsResponse.builder()
                 .id(save.getId())
+                .userId(save.getUser().getId())
                 .title(save.getTitle())
                 .content(save.getContent())
                 .deadline(save.getDeadline())
@@ -75,7 +90,7 @@ public class BoardService {
                 .modifiedAt(save.getModifiedAt())
                 .build();
 
-        return responseBoardByIdUpdate;
+        return boardDetailsResponseByIdUpdate;
     }
 
     public void deleteBoard(Long id) {
