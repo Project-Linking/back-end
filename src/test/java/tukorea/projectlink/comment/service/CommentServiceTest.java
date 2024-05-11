@@ -133,7 +133,7 @@ class CommentServiceTest {
     @DisplayName("성공: 댓글 수정하기")
     void updateComment() {
         //given
-        when(userA.getUsername()).thenReturn("loginId");
+        when(userA.).thenReturn("loginId");
 
         RequestComment requestComment = RequestComment.builder()
                 .content("test_content")

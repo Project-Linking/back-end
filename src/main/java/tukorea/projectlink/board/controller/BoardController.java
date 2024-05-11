@@ -3,8 +3,11 @@ package tukorea.projectlink.board.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import tukorea.projectlink.board.dto.RequestBoard;
-import tukorea.projectlink.board.dto.ResponseBoard;
+import tukorea.projectlink.auth.Auth;
+import tukorea.projectlink.auth.Authentication;
+import tukorea.projectlink.board.dto.BoardMainResponse;
+import tukorea.projectlink.board.dto.BoardRequest;
+import tukorea.projectlink.board.dto.BoardDetailsResponse;
 import tukorea.projectlink.board.service.BoardService;
 import tukorea.projectlink.global.common.CommonResponse;
 
@@ -17,23 +20,23 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public CommonResponse<ResponseBoard> createPost(@Valid @RequestBody RequestBoard requestBoard){
-        return CommonResponse.successWithData(boardService.createBoard(requestBoard));
+    public CommonResponse<BoardDetailsResponse> createPost(@Valid @RequestBody BoardRequest boardRequest, @Auth Authentication auth){
+        return CommonResponse.successWithData(boardService.createBoard(boardRequest,auth));
     }
 
     @GetMapping
-    public CommonResponse<List<ResponseBoard>> findAllBoard(){
+    public CommonResponse<List<BoardMainResponse>> findAllBoard(){
         return CommonResponse.successWithData(boardService.findAllBoard());
     }
 
     @GetMapping("/{id}")
-    public CommonResponse<ResponseBoard> findBoardById(@PathVariable Long id){
+    public CommonResponse<BoardDetailsResponse> findBoardById(@PathVariable Long id){
         return CommonResponse.successWithData(boardService.findBoardById(id));
     }
 
     @PutMapping("/{id}")
-    public CommonResponse<ResponseBoard> updateBoard(@PathVariable Long id, @Valid @RequestBody RequestBoard requestBoard){
-        return CommonResponse.successWithData(boardService.updateBoard(id, requestBoard));
+    public CommonResponse<BoardDetailsResponse> updateBoard(@PathVariable Long id, @Valid @RequestBody BoardRequest boardRequest){
+        return CommonResponse.successWithData(boardService.updateBoard(id, boardRequest));
     }
 
     @DeleteMapping("/{id}")
