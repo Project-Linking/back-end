@@ -1,8 +1,8 @@
 package tukorea.projectlink.user.dto;
 
 import tukorea.projectlink.user.domain.InterestsType;
-import tukorea.projectlink.user.exception.UserErrorCode;
-import tukorea.projectlink.user.exception.UserException;
+import tukorea.projectlink.global.errorcode.UserErrorCode;
+import tukorea.projectlink.global.exception.UserException;
 
 import java.util.List;
 

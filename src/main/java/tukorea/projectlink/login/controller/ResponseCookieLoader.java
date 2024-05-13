@@ -16,7 +16,7 @@ public class ResponseCookieLoader {
     }
 
     private ResponseCookie makeCookie(UserToken userToken) {
-        return ResponseCookie.from("access-token", userToken.getAccessToken())
+        return ResponseCookie.from("refresh-token", userToken.getRefreshToken())
                 .maxAge(COOKIE_AGE_SECONDS)
                 .sameSite("None")
                 .secure(true)

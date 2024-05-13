@@ -3,9 +3,9 @@ package tukorea.projectlink.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import tukorea.projectlink.global.configproperties.JwtProperties;
-import tukorea.projectlink.jwt.exception.JwtCustomException;
-import tukorea.projectlink.jwt.exception.JwtErrorCode;
+import tukorea.projectlink.global.configproerties.JwtProperties;
+import tukorea.projectlink.global.exception.JwtCustomException;
+import tukorea.projectlink.global.errorcode.JwtErrorCode;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -13,11 +13,9 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
-    private final JwtProperties props;
     private final SecretKey secretKey;
 
     public JwtProvider(JwtProperties props) {
-        this.props = props;
         this.secretKey = Keys.hmacShaKeyFor(props.secretKey().getBytes(StandardCharsets.UTF_8));
     }
 

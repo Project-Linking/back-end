@@ -1,11 +1,11 @@
-package tukorea.projectlink.global.configproperties;
+package tukorea.projectlink.global.configproerties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "oauth2.provider.naver")
-public record NaverOauth2Properties(
-        String clientSecret,
+@ConfigurationProperties(prefix = "oauth2.provider.kakao")
+public record KakaoOauth2Properties(
         String clientId,
+        String clientSecret,
         String redirectUri,
         String tokenUri,
         String userInfoUri,

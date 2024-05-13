@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tukorea.projectlink.auth.Authentication;
+import tukorea.projectlink.global.exception.UserException;
 import tukorea.projectlink.oauth2.userinfo.Oauth2UserInfo;
 import tukorea.projectlink.user.domain.Interests;
 import tukorea.projectlink.user.domain.InterestsType;
 import tukorea.projectlink.user.domain.User;
 import tukorea.projectlink.user.dto.InterestsRequest;
 import tukorea.projectlink.user.dto.UserSignUpRequest;
-import tukorea.projectlink.user.exception.UserException;
 import tukorea.projectlink.user.repository.UserRepository;
 
 import java.util.List;
 
-import static tukorea.projectlink.user.exception.UserErrorCode.DUPLICATED_DATA_REQUEST;
-import static tukorea.projectlink.user.exception.UserErrorCode.USER_NOT_FOUND;
+import static tukorea.projectlink.global.errorcode.UserErrorCode.DUPLICATED_DATA_REQUEST;
+import static tukorea.projectlink.global.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 @Transactional(readOnly = true)
 @Service
@@ -77,5 +77,11 @@ public class UserService {
         if (userRepository.findByNickname(userSignUpDto.nickname()).isPresent()) {
             throw new UserException(DUPLICATED_DATA_REQUEST.changeDefaultDescription("이미 존재하는 닉네임입니다."));
         }
+    }
+
+    public User checkRefreshToken(String refreshToken) {
+        User byRefreshToken = userRepository.findByRefreshToken(refreshToken).get();
+        return byRefreshToken;
+//                .orElseThrow(() -> new UserException(UserErrorCode.USER_REFRESH_TOKEN_NOT_FOUND));
     }
 }

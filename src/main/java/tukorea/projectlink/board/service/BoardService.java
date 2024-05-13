@@ -8,7 +8,7 @@ import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.dto.BoardMainResponse;
 import tukorea.projectlink.board.dto.BoardRequest;
 import tukorea.projectlink.board.dto.BoardDetailsResponse;
-import tukorea.projectlink.board.exception.BoardException;
+import tukorea.projectlink.global.exception.BoardException;
 import tukorea.projectlink.board.respository.BoardRepository;
 import tukorea.projectlink.comment.service.CommentService;
 import tukorea.projectlink.user.service.UserService;
@@ -16,7 +16,7 @@ import tukorea.projectlink.user.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static tukorea.projectlink.board.exception.BoardErrorCode.BOARD_ID_INVALID;
+import static tukorea.projectlink.global.errorcode.BoardErrorCode.BOARD_ID_INVALID;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +74,7 @@ public class BoardService {
     }
 
     public BoardDetailsResponse updateBoard(Long id, BoardRequest boardRequest) {
-        Board board = boardRepository.findById(id).orElseThrow(() ->  new BoardException(BOARD_ID_INVALID));
+        Board board = boardRepository.findById(id).orElseThrow(() -> new BoardException(BOARD_ID_INVALID));
 
         board.update(boardRequest.title(), boardRequest.content(), boardRequest.deadline());
 

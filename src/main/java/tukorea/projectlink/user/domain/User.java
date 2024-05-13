@@ -48,6 +48,10 @@ public class User {
         this.refreshToken = updateRefreshToken;
     }
 
+    public void removeRefreshToken() {
+        this.refreshToken = null;
+    }
+
     public void updateInterests(List<InterestsType> newTypes) {
         this.interests.removeAll(removeInterests(newTypes));
         this.interests.addAll(addInterests(newTypes));

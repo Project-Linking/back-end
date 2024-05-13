@@ -1,7 +1,10 @@
 package tukorea.projectlink.board.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import tukorea.projectlink.comment.domain.Comment;
 import tukorea.projectlink.user.domain.User;
@@ -31,7 +34,7 @@ public class Board extends Timestamp {
     @Column
     private LocalDateTime deadline;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
