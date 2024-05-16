@@ -2,6 +2,9 @@ package tukorea.projectlink.board.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import tukorea.projectlink.auth.Auth;
 import tukorea.projectlink.auth.Authentication;
@@ -25,8 +28,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public CommonResponse<List<BoardMainResponse>> findAllBoard(){
-        return CommonResponse.successWithData(boardService.findAllBoard());
+    public CommonResponse<Page<BoardMainResponse>> findAllBoard(@PageableDefault(size = 5) Pageable pageable){
+        return CommonResponse.successWithData(boardService.findAllBoard(pageable));
     }
 
     @GetMapping("/{id}")

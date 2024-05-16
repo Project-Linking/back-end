@@ -3,6 +3,8 @@ package tukorea.projectlink.board.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import tukorea.projectlink.board.domain.Board;
+import tukorea.projectlink.comment.domain.Comment;
 import tukorea.projectlink.comment.dto.ResponseComment;
 
 import java.time.LocalDateTime;
@@ -25,5 +27,19 @@ public record BoardDetailsResponse(
     LocalDateTime createdAt,
     LocalDateTime modifiedAt,
     List<ResponseComment> comments
-) {}
+) {
+    public static BoardDetailsResponse toResponseDetails(Board board, List<ResponseComment> comments) {
+
+        return BoardDetailsResponse.builder()
+                .id(board.getId())
+                .userId(board.getUser().getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .deadline(board.getDeadline())
+                .createdAt(board.getCreatedAt())
+                .modifiedAt(board.getModifiedAt())
+                .comments(comments)
+                .build();
+    }
+}
 
