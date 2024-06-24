@@ -3,6 +3,11 @@ package tukorea.projectlink.oauth2.userinfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NaverUserInfo implements Oauth2UserInfo {
+    @JsonProperty("resultcode")
+    private String resultCode;
+    @JsonProperty("message")
+    private String message;
+
     @JsonProperty("response")
     private Response response;
 

@@ -9,11 +9,11 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import tukorea.projectlink.global.errorcode.JwtErrorCode;
+import tukorea.projectlink.global.errorcode.UserErrorCode;
+import tukorea.projectlink.global.exception.JwtCustomException;
+import tukorea.projectlink.global.exception.UserException;
 import tukorea.projectlink.jwt.JwtProvider;
-import tukorea.projectlink.jwt.exception.JwtCustomException;
-import tukorea.projectlink.jwt.exception.JwtErrorCode;
-import tukorea.projectlink.user.exception.UserErrorCode;
-import tukorea.projectlink.user.exception.UserException;
 
 @RequiredArgsConstructor
 @Component
@@ -36,6 +36,9 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
         }
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         String accessToken = extractTokenFromHeader(header);
+        if (accessToken.isEmpty()) {
+            throw new UserException(UserErrorCode.USER_ACCESS_TOKEN_NOT_FOUND);
+        }
         jwtProvider.checkAccessToken(accessToken);
         String subject = jwtProvider.getSubject(accessToken);
 
@@ -46,7 +49,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
         if (header.startsWith(BEARER)) {
             return header.substring(BEARER.length()).trim();
         } else {
-            throw new JwtCustomException(JwtErrorCode.INVALID_HEADER_TYPE);
+            throw new JwtCustomException(JwtErrorCode.INVALID_JWT);
         }
     }
 }
