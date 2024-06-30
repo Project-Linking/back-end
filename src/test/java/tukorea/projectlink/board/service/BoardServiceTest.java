@@ -6,6 +6,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import tukorea.projectlink.board.domain.Board;
 import tukorea.projectlink.board.respository.BoardRepository;
 import tukorea.projectlink.comment.domain.Comment;
@@ -59,7 +63,10 @@ class BoardServiceTest {
         em.clear();
 
         System.out.println("=== N+1 문제 발생 시나리오 ===");
-        List<Board> boards = boardRepository.findAllByOrderByModifiedAtDesc();
+
+        Pageable pageable = PageRequest.of(1, 5, Sort.by("modifiedAt").descending());
+
+        Page<Board> boards = boardRepository.findAllByOrderByModifiedAtDesc(pageable);
         for (Board board : boards) {
             System.out.println("board_id=" + board.getId());
             System.out.println("댓글 수: " + board.getComments().size());
