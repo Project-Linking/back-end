@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tukorea.projectlink.global.errorcode.UserErrorCode;
 import tukorea.projectlink.global.exception.UserException;
-import tukorea.projectlink.jwt.JwtService;
-import tukorea.projectlink.jwt.UserToken;
+import tukorea.projectlink.global.jwt.JwtService;
+import tukorea.projectlink.global.jwt.UserToken;
 import tukorea.projectlink.login.dto.LoginRequest;
 import tukorea.projectlink.login.dto.LoginResponse;
 import tukorea.projectlink.login.dto.Oauth2LoginResponse;
@@ -37,6 +37,12 @@ public class LoginService {
         return new Oauth2LoginResponse(userToken, oauth2UserInfo.getNickname(), oauth2UserInfo.getImageUrl());
     }
 
+    public UserToken issueUserToken(User user) {
+        UserToken userToken = jwtService.createUserToken(user.getId());
+        user.updateRefreshToken(userToken.getRefreshToken());
+        return userToken;
+    }
+
     public LoginResponse login(LoginRequest loginRequest) {
         User user = userService.getUser(loginRequest.loginId());
         UserToken userToken = verifyPassword(loginRequest, user);
@@ -49,12 +55,6 @@ public class LoginService {
         } else {
             throw new UserException(UserErrorCode.INVALID_PASSWORD);
         }
-    }
-
-    public UserToken issueUserToken(User user) {
-        UserToken userToken = jwtService.createUserToken(user.getId());
-        user.updateRefreshToken(userToken.getRefreshToken());
-        return userToken;
     }
 
     // TODO Transactional read only?

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import tukorea.projectlink.group.domain.Group;
 import tukorea.projectlink.user.Role;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class User {
     private String password;
     private String nickname;
     private String imageUri;
+    @OneToMany(fetch = FetchType.LAZY)
+    private final List<Group> groups = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private Role role;
     private String socialId;
@@ -57,6 +60,13 @@ public class User {
         this.interests.addAll(addInterests(newTypes));
     }
 
+    private List<Interests> removeInterests(List<InterestsType> newTypes) {
+        return this.interests
+                .stream()
+                .filter(isDifferentWithOldTypes(newTypes))
+                .toList();
+    }
+
     private List<Interests> addInterests(List<InterestsType> newTypes) {
         return newTypes
                 .stream()
@@ -65,11 +75,8 @@ public class User {
                 .toList();
     }
 
-    private List<Interests> removeInterests(List<InterestsType> newTypes) {
-        return this.interests
-                .stream()
-                .filter(isDifferentWithOldTypes(newTypes))
-                .toList();
+    private Predicate<Interests> isDifferentWithOldTypes(List<InterestsType> newTypes) {
+        return oldType -> !newTypes.contains(oldType.getInterestsType());
     }
 
     private Predicate<InterestsType> isDifferentWithNewTypes() {
@@ -78,9 +85,5 @@ public class User {
                 .map(Interests::getInterestsType)
                 .toList()
                 .contains(newType);
-    }
-
-    private Predicate<Interests> isDifferentWithOldTypes(List<InterestsType> newTypes) {
-        return oldType -> !newTypes.contains(oldType.getInterestsType());
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tukorea.projectlink.auth.Auth;
 import tukorea.projectlink.auth.Authentication;
 import tukorea.projectlink.global.common.CommonResponse;
-import tukorea.projectlink.jwt.UserToken;
+import tukorea.projectlink.global.jwt.UserToken;
 import tukorea.projectlink.login.dto.LoginRequest;
 import tukorea.projectlink.login.dto.LoginResponse;
 import tukorea.projectlink.login.dto.Oauth2LoginResponse;

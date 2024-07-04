@@ -1,4 +1,4 @@
-package tukorea.projectlink.jwt;
+package tukorea.projectlink.global.jwt;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

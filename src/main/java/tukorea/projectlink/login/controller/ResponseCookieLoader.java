@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import tukorea.projectlink.jwt.UserToken;
+import tukorea.projectlink.global.jwt.UserToken;
 
 @Component
 public class ResponseCookieLoader {

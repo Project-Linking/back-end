@@ -13,7 +13,7 @@ import tukorea.projectlink.global.errorcode.JwtErrorCode;
 import tukorea.projectlink.global.errorcode.UserErrorCode;
 import tukorea.projectlink.global.exception.JwtCustomException;
 import tukorea.projectlink.global.exception.UserException;
-import tukorea.projectlink.jwt.JwtProvider;
+import tukorea.projectlink.global.jwt.JwtProvider;
 
 @RequiredArgsConstructor
 @Component
@@ -31,7 +31,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (request == null) {
+        if (request==null) {
             throw new UserException(UserErrorCode.INVALID_REQUEST);
         }
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);

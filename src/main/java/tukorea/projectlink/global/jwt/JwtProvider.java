@@ -1,11 +1,11 @@
-package tukorea.projectlink.jwt;
+package tukorea.projectlink.global.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 import tukorea.projectlink.global.configproerties.JwtProperties;
-import tukorea.projectlink.global.exception.JwtCustomException;
 import tukorea.projectlink.global.errorcode.JwtErrorCode;
+import tukorea.projectlink.global.exception.JwtCustomException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +40,13 @@ public class JwtProvider {
         }
     }
 
+    private Jws<Claims> parse(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token);
+    }
+
     public void checkRefreshToken(String refreshToken) {
         try {
             parse(refreshToken);
@@ -54,12 +61,5 @@ public class JwtProvider {
         return parse(token)
                 .getPayload()
                 .getSubject();
-    }
-
-    private Jws<Claims> parse(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token);
     }
 }
